@@ -12,7 +12,7 @@ export default function Sliders() {
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         modules={[Pagination,Autoplay]}
         className="mySwiper w-96 h-96 m-0 "
-      >
+      >c
         <SwiperSlide className="flex items-center justify-center  p-6 ">
           <div className="flex flex-col text-center">
             <p className="text-white font-sans font-bold text-2xl mb-4">

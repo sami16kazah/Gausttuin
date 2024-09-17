@@ -4,10 +4,11 @@ import background from "../../background.png";
 import Sliders from "@/components/Auth/Swiper";
 
 export default function SignIn() {
+  
   return (
     /* background image */
     <div
-      className="relative h-screen w-screen"
+      className="relative h-full w-full"
       style={{
         backgroundImage: `url(${background.src})`,
         backgroundSize: "cover", // Ensure the image covers the full page

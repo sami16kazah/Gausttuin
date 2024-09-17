@@ -7,7 +7,7 @@ export default function SignUp() {
   return (
     /* background image */
     <div
-      className="relative h-full w-full"
+      className="relative h-full w-full "
       style={{
         backgroundImage: `url(${background.src})`,
         backgroundSize: "cover", // Ensure the image covers the full page
@@ -23,9 +23,9 @@ export default function SignUp() {
       ></div>
 
       {/* container */}
-      <div className="relative container mx-auto h-fit flex flex-col md:flex-row items-center justify-center px-4 md:px-10">
+      <div className="relative  container mx-auto h-full  flex flex-col md:flex-row items-center justify-center px-4 md:px-10">
         {/* Left column */}
-        <SignUpCard></SignUpCard>
+          <SignUpCard></SignUpCard>
 
         {/* Right column (hidden on small screens) */}
         <div className="hidden md:flex md:flex-col  w-full md:w-1/2 justify-start items-center">

@@ -9,9 +9,10 @@ interface FloatingLabelProps extends React.HTMLAttributes<HTMLDivElement> {
   input_name: string;
   type: string;
   className?: string;
+  onChange?:(event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const FloatingLabel: FC<FloatingLabelProps> = ({ input_name, type, className }) => {
+export const FloatingLabel: FC<FloatingLabelProps> = ({ input_name, type, className,onChange }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Toggle password visibility
@@ -34,8 +35,10 @@ export const FloatingLabel: FC<FloatingLabelProps> = ({ input_name, type, classN
     return (
       <input
         type={type === "password" ? (showPassword ? "text" : "password") : type}
-        className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-700 focus:outline-none focus:ring-0 focus:border-green-700 peer"
+        className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-700 focus:outline-none focus:ring-0 focus:border-green-700 peer "
         placeholder=" "
+        onChange={onChange}
+        required
       />
     );
   };

@@ -28,3 +28,22 @@
 .epr-body::-webkit-scrollbar-thumb {
   background: #14532d !important;
 }
+
+input:-webkit-autofill {
+  background-color: #f0f0f0 !important; /* Change background color for autofilled inputs */
+  border-color: #4caf50 !important; /* Change border color for autofilled inputs */
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5) !important; /* Customize the focus shadow */
+  transition: background-color 5000s ease-in-out 0s; /* Ensure the background color remains */
+}
+
+/* Ensure the border and background color are consistent when focused */
+input:-webkit-autofill:focus {
+  border-color: #4caf50 !important; /* Ensure border color stays consistent on focus */
+  background-color: #f0f0f0 !important; /* Maintain background color on focus */
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5) !important; /* Customize focus shadow */
+}
+
+input:-webkit-autofill:focus {
+  border-color: #4caf50 !important; /* Ensure the border color stays consistent when focused */
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5) !important; /* Customize focus shadow */
+}

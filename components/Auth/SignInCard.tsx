@@ -8,12 +8,12 @@ import { FcGoogle } from 'react-icons/fc';
 import SignInForm from './Forms/SignInForm';
 export default function SignInCard() {
   return (
-    <div className="flex justify-center items-center w-full md:w-1/2 mb-6 md:mb-0">
-    <div className="w-full max-w-md bg-white border p-6 md:p-8 rounded-xl shadow-lg flex flex-col items-center justify-center">
-      <Image className="w-52 h-auto" src={logo} alt="Gausttin logo" />
-      <p className="text-black font-sans font-bold text-lg md:text-2xl mt-4 mb-6 text-center">
-        Sign in to De Gasttuin
-      </p>
+    <div className="flex justify-center items-center scale-90 w-full md:w-full lg:w-1/2 mb-6 md:mb-0">
+      <div className="w-full max-w-md m-10 bg-white border p-6 md:p-8 rounded-xl shadow-lg flex flex-col items-center">
+        <Image className="w-fit h-auto mb-4" src={logo} alt="Gausttin logo" />
+        <p className="text-black font-sans font-bold text-lg md:text-xl mt-2 mb-4 text-center">
+          Sign in to De Gasttuin
+        </p>
 
       <SignInForm></SignInForm>
       <hr className="bg-gray-300 w-full h-1 rounded-full my-3" />
