@@ -4,7 +4,7 @@ import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const UserApi = createApi({
   reducerPath: 'user', // Adjust reducer path as needed
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:1337/api' }), // Replace with your Strapi API URL
+  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL  }), // Replace with your Strapi API URL
   endpoints(builder){
     return {
     login: builder.mutation({

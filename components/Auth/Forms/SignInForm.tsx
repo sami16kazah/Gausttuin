@@ -10,7 +10,9 @@ export default function SignInForm() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [login, { isLoading, error }] = useLoginMutation();
+  const [errors, setErrors] = useState<string | null>(null);
+  const [login, { isLoading }] = useLoginMutation();
+  const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
 
   // Regex to check if the email is valid
@@ -27,6 +29,7 @@ export default function SignInForm() {
     // Clear previous error messages
     setEmailError("");
     setPasswordError("");
+    setErrors(null);
 
     // Perform validation
     let isValid = true;
@@ -46,10 +49,19 @@ export default function SignInForm() {
     try {
       const userData = await login({ identifier: email, password }).unwrap();
       localStorage.setItem("jwt", userData.jwt);
+      if (rememberMe) {
+        localStorage.setItem("email", email);
+        localStorage.setItem("jwt", userData.jwt);
+        localStorage.setItem("rememberMe", "true");
+      } else {
+        localStorage.removeItem("rememberMe");
+        localStorage.removeItem("email");
+      }
       router.push("/auth/signup");
-    } catch (errors) {
-      console.log(error);
-      console.log("Failed to login");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Login failed", error.data.error.message);
+      setErrors(error.data.error.message);
     }
   };
 
@@ -67,32 +79,36 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <form onSubmit={handleSubmit}>
         {/* Email Field */}
         <FloatingLabel
-          className={`mt-4 w-full ${emailError ? "border-red-500" : ""}`} // Add red border if emailError exists
+          className={`mt-4 w-full ${
+            emailError || errors ? "border-red-500" : ""
+          }`} // Add red border if emailError exists
           input_name={"Email"}
           type={"email"}
           value={email}
           onChange={(value) => handleChange(value, "email")}
         />
         {emailError && (
-          <div className="text-red-500 text-sm font-sans mb-3">
+          <div className="text-red-500 text-sm font-sans font-semibold mb-3">
             {emailError}
           </div>
         )}
 
         {/* Password Field */}
         <FloatingLabel
-          className={`mt-4 w-full ${passwordError ? "border-red-500" : ""}`} // Add red border if passwordError exists
+          className={`mt-4 w-full ${
+            passwordError || errors ? "border-red-500" : ""
+          }`} // Add red border if passwordError exists
           input_name={"Password"}
           type={"password"}
           value={password}
           onChange={(value) => handleChange(value, "password")}
         />
         {passwordError && (
-          <div className="text-red-500 text-sm font-sans mb-3">
+          <div className="text-red-500 text-sm font-sans font-semibold mb-3">
             {passwordError}
           </div>
         )}
@@ -100,7 +116,11 @@ export default function SignInForm() {
         {/* Remember me and Forget Password */}
         <div className="flex justify-between items-center w-full mt-3 mb-4 text-sm">
           <label className="flex items-center space-x-2">
-            <input type="checkbox" className="h-4 w-4 text-green-700" />
+            <input
+              type="checkbox"
+              className="h-4 w-4 text-green-700"
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
             <span className="text-gray-700">Remember me</span>
           </label>
           <Link
@@ -112,9 +132,9 @@ export default function SignInForm() {
         </div>
 
         {/* Display error message from the API if exists */}
-        {error && (
-          <div className="text-red-500 text-sm font-sans mb-3 text-center">
-            {"Invalid Credentials!"}
+        {errors && (
+          <div className="text-red-500 text-sm font-sans mb-3 text-center font-semibold">
+            {errors}
           </div>
         )}
 

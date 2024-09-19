@@ -10,6 +10,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(UserApi.middleware),
+  
 });
 
 // Export hooks for using the store

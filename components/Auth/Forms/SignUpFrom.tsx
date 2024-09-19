@@ -102,7 +102,7 @@ const SignUpForm: React.FC = () => {
               error={errors.firstName}
             />
             <FloatingLabel
-              className="w-full"
+              className="w-full "
               input_name="Last Name"
               type="text"
               id="lastName"
@@ -113,7 +113,7 @@ const SignUpForm: React.FC = () => {
           </div>
 
           <FloatingLabel
-            className="w-full"
+            className="w-full "
             input_name="Email"
             type="email"
             id="email"
@@ -123,7 +123,7 @@ const SignUpForm: React.FC = () => {
           />
 
           <FloatingLabel
-            className="w-full"
+            className="w-full "
             input_name="Password"
             type="password"
             id="password"
@@ -133,7 +133,7 @@ const SignUpForm: React.FC = () => {
           />
 
           <FloatingLabel
-            className="w-full"
+            className="w-full "
             input_name="Confirm Password"
             type="password"
             id="confirmPassword"
@@ -155,7 +155,7 @@ const SignUpForm: React.FC = () => {
         {loading && <div className="text-center mb-3">Loading...</div>}{" "}
         {/* Show loading indicator */}
         {error && (
-          <div className="text-center text-red-500 mb-3">{error}</div>
+          <div className="text-center text-red-500 mb-3 font-sans font-semibold">{error}</div>
         )}{" "}
         {/* Show general error message */}
         <Button

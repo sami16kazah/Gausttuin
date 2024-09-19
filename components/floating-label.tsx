@@ -34,7 +34,9 @@ export const FloatingLabel: FC<FloatingLabelProps> = ({
   const renderInput = () => {
     if (type === "tel") {
       return (
-        <div className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-700 focus:outline-none focus:ring-0 focus:border-green-700 peer">
+        <div className={cn("block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-green-700 focus:outline-none focus:ring-0 focus:border-green-700 peer",
+          error && "border-red-500 "
+        )}>
           <PhoneInput 
             country={"nl"} 
             placeholder=" " 
@@ -50,7 +52,7 @@ export const FloatingLabel: FC<FloatingLabelProps> = ({
         className={cn(
           "block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-green-700 focus:outline-none focus:ring-0 focus:border-green-700 peer ",
           className,
-          error && "border-red-500" 
+          error && "border-red-500 mt-4 " 
         )}
         placeholder=" "
         onChange={(e: ChangeEvent<HTMLInputElement>) => onChange?.(e.target.value)} // Use optional chaining
@@ -67,7 +69,7 @@ export const FloatingLabel: FC<FloatingLabelProps> = ({
       <label className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white  px-2 peer-focus:px-2 peer-focus:text-green-700 peer-focus:dark:text-green-700 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">
         {input_name}
       </label>
-      {error && <div className="text-red-500 text-sm mt-1">{error}</div>}
+      {error && <div className="text-red-500 text-sm mt-1 font-sans font-semibold">{error}</div>}
       {type === "password" && (
         <button
           type="button"
