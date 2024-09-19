@@ -2,12 +2,14 @@
 import SignUpCard from "@/components/Auth/SignUpCard";
 import background from "../../background.png";
 import Sliders from "@/components/Auth/Swiper";
+import { ReduxProvider } from "@/util/Redux-Provider";
 
 export default function SignUp() {
   return (
-    /* background image */
+   <ReduxProvider>
+    {/* background image */}
     <div
-      className="relative h-full w-full "
+      className="relative min-h-screen w-full "
       style={{
         backgroundImage: `url(${background.src})`,
         backgroundSize: "cover", // Ensure the image covers the full page
@@ -38,5 +40,6 @@ export default function SignUp() {
         </div>
       </div>
     </div>
+    </ReduxProvider>
   );
 }

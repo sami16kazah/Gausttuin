@@ -13,10 +13,17 @@ export const UserApi = createApi({
         method: 'POST',
         body: credentials,
       }),
+    }),
+    registerUser: builder.mutation<{ jwt: string }, { username: string; email: string; password: string ,phone:number }>({
+      query: (user) => ({
+        url: 'auth/local/register',
+        method: 'POST',
+        body: user,
+      }),
     })
   }
 }
 });
 
 
-export const { useLoginMutation }= UserApi;
+export const { useLoginMutation , useRegisterUserMutation }= UserApi;

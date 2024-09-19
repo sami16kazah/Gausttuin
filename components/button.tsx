@@ -20,7 +20,7 @@ export const Button: FC<ButtonProps> = ({
     <Link href={link} target="_blank" className="w-full cursor-pointer">
       <button
         className={cn(
-          "flex items-center justify-center gap-2 bg-green-700 rounded-full select-none text-white text-sm font-medium hover:bg-green-800",
+          "flex items-center justify-center gap-2 bg-green-700 rounded-full select-none text-white text-sm font-medium hover:bg-orange-400",
           "transition-colors duration-100",
           className,
           isIcon ? "h-10 w-10" : "w-full h-auto px-5 py-3"
@@ -33,7 +33,7 @@ export const Button: FC<ButtonProps> = ({
   ) : (
     <button
       className={cn(
-        "flex items-center justify-center gap-2 bg-green-700 rounded-full select-none text-white text-sm font-medium hover:bg-green-800",
+        "flex items-center justify-center gap-2 bg-green-700 rounded-full select-none text-white text-sm font-medium hover:bg-orange-400",
         "transition-colors duration-100",
         className,
         isIcon ? "h-10 w-10" : "w-full h-auto px-5 py-3"

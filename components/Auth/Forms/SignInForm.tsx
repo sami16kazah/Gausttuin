@@ -7,40 +7,95 @@ import { useRouter } from "next/navigation";
 
 export default function SignInForm() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");;
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [login, { isLoading, error }] = useLoginMutation();
   const router = useRouter();
 
+  // Regex to check if the email is valid
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Function to validate password strength (you can customize this)
+  const isPasswordStrong = (password: string) => {
+    return password.length >= 8; // Example rule: password must be at least 8 characters long
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("formSubmitted");
-    console.log(e.target);
     e.preventDefault();
+
+    // Clear previous error messages
+    setEmailError("");
+    setPasswordError("");
+
+    // Perform validation
+    let isValid = true;
+
+    if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email.");
+      isValid = false;
+    }
+
+    if (!isPasswordStrong(password)) {
+      setPasswordError("Password must be at least 8 characters long.");
+      isValid = false;
+    }
+
+    if (!isValid) return;
+
     try {
       const userData = await login({ identifier: email, password }).unwrap();
       localStorage.setItem("jwt", userData.jwt);
       router.push("/auth/signup");
-    } catch (error) {
+    } catch (errors) {
+      console.log(error);
       console.log("Failed to login");
     }
   };
 
+  const handleChange = (value: string, id: string) => {
+    switch (id) {
+      case "email":
+        setEmail(value);
+        break;
+      case "password":
+        setPassword(value);
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <div className="w-full ">
       <form onSubmit={handleSubmit}>
-        {/* Email and Password fields */}
+        {/* Email Field */}
         <FloatingLabel
-          className=" mt-4 w-full"
+          className={`mt-4 w-full ${emailError ? "border-red-500" : ""}`} // Add red border if emailError exists
           input_name={"Email"}
           type={"email"}
-          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          onChange={(value) => handleChange(value, "email")}
         />
+        {emailError && (
+          <div className="text-red-500 text-sm font-sans mb-3">
+            {emailError}
+          </div>
+        )}
+
+        {/* Password Field */}
         <FloatingLabel
-          className=" mt-4 w-full"
+          className={`mt-4 w-full ${passwordError ? "border-red-500" : ""}`} // Add red border if passwordError exists
           input_name={"Password"}
           type={"password"}
-          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          onChange={(value) => handleChange(value, "password")}
         />
+        {passwordError && (
+          <div className="text-red-500 text-sm font-sans mb-3">
+            {passwordError}
+          </div>
+        )}
 
         {/* Remember me and Forget Password */}
         <div className="flex justify-between items-center w-full mt-3 mb-4 text-sm">
@@ -56,10 +111,10 @@ export default function SignInForm() {
           </Link>
         </div>
 
-        {/* Display error message if exists */}
+        {/* Display error message from the API if exists */}
         {error && (
           <div className="text-red-500 text-sm font-sans mb-3 text-center">
-              {"Invalid Credantials !"}
+            {"Invalid Credentials!"}
           </div>
         )}
 
