@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FloatingLabel } from "@/components/floating-label";
 import { Button } from "@/components/button";
 import Link from "next/link";
-import { useLoginMutation } from "@/store/apis/UsersApi";
 import { useRouter } from "next/navigation";
 
 export default function SignInForm() {
@@ -10,9 +9,9 @@ export default function SignInForm() {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [errors, setErrors] = useState<string | null>(null);
-  const [login, { isLoading }] = useLoginMutation();
+  const [error, setError] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading,setLoading]=useState(false);
   const router = useRouter();
 
   // Regex to check if the email is valid
@@ -22,48 +21,51 @@ export default function SignInForm() {
   const isPasswordStrong = (password: string) => {
     return password.length >= 8; // Example rule: password must be at least 8 characters long
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Clear previous error messages
     setEmailError("");
     setPasswordError("");
-    setErrors(null);
-
-    // Perform validation
+    setError(null);
+    setLoading(true);
+  
     let isValid = true;
-
     if (!emailRegex.test(email)) {
       setEmailError("Please enter a valid email.");
       isValid = false;
     }
-
     if (!isPasswordStrong(password)) {
       setPasswordError("Password must be at least 8 characters long.");
       isValid = false;
     }
-
     if (!isValid) return;
-
+  
     try {
-      const userData = await login({ identifier: email, password }).unwrap();
-      localStorage.setItem("jwt", userData.jwt);
-      if (rememberMe) {
-        localStorage.setItem("email", email);
-        localStorage.setItem("jwt", userData.jwt);
-        localStorage.setItem("rememberMe", "true");
-      } else {
-        localStorage.removeItem("rememberMe");
-        localStorage.removeItem("email");
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          rememberMe: rememberMe, // Add this line
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Something went wrong');
       }
-      router.push("/auth/signup");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
+      router.push('/auth/signup'); // Redirect after successful login
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error("Login failed", error.data.error.message);
-      setErrors(error.data.error.message);
+      setError(error?.message.toString() || "An error occurred during login");
+    } finally {
+      setLoading(false);
     }
   };
+  
 
   const handleChange = (value: string, id: string) => {
     switch (id) {
@@ -84,7 +86,7 @@ export default function SignInForm() {
         {/* Email Field */}
         <FloatingLabel
           className={`mt-4 w-full ${
-            emailError || errors ? "border-red-500" : ""
+            emailError || error ? "border-red-500" : ""
           }`} // Add red border if emailError exists
           input_name={"Email"}
           type={"email"}
@@ -100,7 +102,7 @@ export default function SignInForm() {
         {/* Password Field */}
         <FloatingLabel
           className={`mt-4 w-full ${
-            passwordError || errors ? "border-red-500" : ""
+            passwordError || error ? "border-red-500" : ""
           }`} // Add red border if passwordError exists
           input_name={"Password"}
           type={"password"}
@@ -132,19 +134,19 @@ export default function SignInForm() {
         </div>
 
         {/* Display error message from the API if exists */}
-        {errors && (
+        {error && (
           <div className="text-red-500 text-sm font-sans mb-3 text-center font-semibold">
-            {errors}
+            {error}
           </div>
         )}
 
         {/* Sign in Button */}
         <Button
           className="rounded-lg w-full py-2 px-3 text-center mb-3"
-          disabled={isLoading}
+          disabled={loading}
           type="submit"
         >
-          {isLoading ? "Signing in..." : "Sign in"}
+          {loading ? "Signing in..." : "Sign in"}
         </Button>
       </form>
     </div>

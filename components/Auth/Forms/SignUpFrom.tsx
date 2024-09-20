@@ -1,7 +1,7 @@
+'use client'
 import React, { useState } from "react";
 import { FloatingLabel } from "@/components/floating-label";
 import { Button } from "@/components/button";
-import { useRegisterUserMutation } from "@/store/apis/UsersApi";
 import { useRouter } from "next/navigation";
 
 const SignUpForm: React.FC = () => {
@@ -15,7 +15,6 @@ const SignUpForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [registerUser] = useRegisterUserMutation();
   
   const router = useRouter();
 
@@ -62,33 +61,43 @@ const SignUpForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when starting submission
-    setError(null); // Clear any previous error
-
+    setLoading(true);
+    setError(null);
+  
     if (!validateForm()) {
-      setLoading(false); // Stop loading if form validation fails
+      setLoading(false);
       return;
     }
-
+  
     try {
-      await registerUser({
-        username: `${firstName} ${lastName}`,
-        email: email,
-        password: password,
-        phone: +telephone,
-      }).unwrap();
-      const title = "You signed up succefully ";
-      const message = "Please check up your email to verify your account !"
-      // Redirect or show success message here
-      router.push(`/auth/signin?show=true&title=${title}&message=${message}`);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: `${firstName} ${lastName}`,
+          email: email,
+          password: password,
+          phone: telephone,
+        }),
+      });  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Something went wrong');
+      }
+      const data = await response.json();
+      const title = "You signed up successfully!";
+      const message = "Please check your email to verify your account!";
+      router.push(`/auth/signin?show=true&title=${title}&message=${message}&data=${data}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error("Registration failed", error!.data.error.message);
-      setError(error!.data.error.message); // Set error message
+      setError(error?.message.toString() || "An error occurred during registration");
     } finally {
-      setLoading(false); // Stop loading when done
+      setLoading(false);
     }
   };
+  
 
   return (
     <div className="w-full">
@@ -155,7 +164,6 @@ const SignUpForm: React.FC = () => {
             error={errors.telephone}
           />
         </div>
-        {loading && <div className="text-center mb-3">Loading...</div>}{" "}
         {/* Show loading indicator */}
         {error && (
           <div className="text-center text-red-500 mb-3 font-sans font-semibold">{error}</div>
@@ -166,7 +174,7 @@ const SignUpForm: React.FC = () => {
           type="submit"
           disabled={loading} // Disable button while loading
         >
-          Sign Up
+        {loading ? "Signing up ..." : "Sign up"}
         </Button>
       </form>
     </div>

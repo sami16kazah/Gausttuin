@@ -1,8 +1,7 @@
-"use client";
+'use client'
 import SignInCard from "@/components/Auth/SignInCard";
 import background from "../../background.png";
 import Sliders from "@/components/Auth/Swiper";
-import { ReduxProvider } from "@/util/Redux-Provider";
 import { useSearchParams } from 'next/navigation'
 import { useState,useEffect } from "react";
 import Modal from "@/components/Modal";
@@ -24,7 +23,7 @@ export default function SignIn() {
     }
   
   return (
-    <ReduxProvider>
+    <>
       {showModel && <Modal onClose={handelClose} title={title!} description={description!} buttonDescription={"Accept"}></Modal>}
       {/* background image  */}
 
@@ -62,6 +61,6 @@ export default function SignIn() {
         </div>
       </div>
     </div>
-    </ReduxProvider>
+    </>
   );
 }

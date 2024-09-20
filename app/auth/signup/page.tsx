@@ -1,13 +1,11 @@
-"use client";
+'use client'
 import SignUpCard from "@/components/Auth/SignUpCard";
 import background from "../../background.png";
 import Sliders from "@/components/Auth/Swiper";
-import { ReduxProvider } from "@/util/Redux-Provider";
 
 export default function SignUp() {
   return (
-   <ReduxProvider>
-    {/* background image */}
+    /* background image */
     <div
       className="relative min-h-screen w-full "
       style={{
@@ -27,7 +25,7 @@ export default function SignUp() {
       {/* container */}
       <div className="relative  container mx-auto h-full  flex flex-col md:flex-row items-center justify-center px-4 md:px-10">
         {/* Left column */}
-          <SignUpCard></SignUpCard>
+        <SignUpCard></SignUpCard>
 
         {/* Right column (hidden on small screens) */}
         <div className="hidden md:flex md:flex-col  w-full md:w-1/2 justify-start items-center">
@@ -40,6 +38,5 @@ export default function SignUp() {
         </div>
       </div>
     </div>
-    </ReduxProvider>
   );
 }
