@@ -16,6 +16,7 @@ const SignUpForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [registerUser] = useRegisterUserMutation();
+  
   const router = useRouter();
 
   const handleChange = (value: string, id: string) => {
@@ -76,8 +77,10 @@ const SignUpForm: React.FC = () => {
         password: password,
         phone: +telephone,
       }).unwrap();
+      const title = "You signed up succefully ";
+      const message = "Please check up your email to verify your account !"
       // Redirect or show success message here
-      router.push("/auth/signin");
+      router.push(`/auth/signin?show=true&title=${title}&message=${message}`);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Registration failed", error!.data.error.message);

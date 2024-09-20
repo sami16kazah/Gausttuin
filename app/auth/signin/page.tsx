@@ -3,12 +3,31 @@ import SignInCard from "@/components/Auth/SignInCard";
 import background from "../../background.png";
 import Sliders from "@/components/Auth/Swiper";
 import { ReduxProvider } from "@/util/Redux-Provider";
-
+import { useSearchParams } from 'next/navigation'
+import { useState,useEffect } from "react";
+import Modal from "@/components/Modal";
 export default function SignIn() {
+  const searchParams = useSearchParams()
+  const show= searchParams.get('show');
+  const title = searchParams.get('title');
+  const description = searchParams.get('message');
+  const [showModel,setShowModel]=useState<boolean>(false);
+    // Convert the 'show' query param to a boolean and handle null case
+    useEffect(() => {
+      if (show !== null) {
+        setShowModel(show === 'true'); // Convert string to boolean
+      }
+    }, [show]);
+
+    const handelClose = ()=>{
+      setShowModel((prev)=>!prev);
+    }
   
   return (
     <ReduxProvider>
+      {showModel && <Modal onClose={handelClose} title={title!} description={description!} buttonDescription={"Accept"}></Modal>}
       {/* background image  */}
+
     <div
       className="relative h-screen w-full"
       style={{
@@ -17,6 +36,7 @@ export default function SignIn() {
         backgroundPosition: "center", // Center the background image
       }}
     >
+      
       {/* background opacity */}
       <div
         className="absolute inset-0"
@@ -26,6 +46,7 @@ export default function SignIn() {
       ></div>
 
       {/* container */}
+      
       <div className="relative container mx-auto h-full flex flex-col md:flex-row items-center justify-center px-4 md:px-10">
         {/* Left column */}
         <SignInCard></SignInCard>

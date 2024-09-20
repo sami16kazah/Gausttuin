@@ -36,6 +36,11 @@ input:-webkit-autofill {
   transition: background-color 5000s ease-in-out 0s; /* Ensure the background color remains */
 }
 
+input, .react-tel-input .form-control {
+  cursor: pointer;
+   /* Shows text cursor (I-beam) when hovering over the input */
+}
+
 /* Ensure the border and background color are consistent when focused */
 input:-webkit-autofill:focus {
   border-color: #4caf50 !important; /* Ensure border color stays consistent on focus */
