@@ -3,7 +3,6 @@ import { FloatingLabel } from "@/components/floating-label";
 import { Button } from "@/components/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
 export default function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -57,7 +56,7 @@ export default function SignInForm() {
         throw new Error(errorData.message || 'Something went wrong');
       }
   
-      router.push('/auth/signup'); // Redirect after successful login
+      router.push('/home'); // Redirect after successful login
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       setError(error?.message.toString() || "An error occurred during login");

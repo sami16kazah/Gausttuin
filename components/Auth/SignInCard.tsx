@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-
 import logo from '../../app/logo.png';
 import Link from 'next/link';
 import { Button } from '../button';

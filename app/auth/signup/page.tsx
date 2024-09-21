@@ -1,4 +1,3 @@
-'use client'
 import SignUpCard from "@/components/Auth/SignUpCard";
 import background from "../../background.png";
 import Sliders from "@/components/Auth/Swiper";
