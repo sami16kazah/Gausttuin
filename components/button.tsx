@@ -17,7 +17,7 @@ export const Button: FC<ButtonProps> = ({
   ...rest
 }) => {
   return link ? (
-    <Link href={link} target="_blank" className="w-full cursor-pointer">
+    <Link href={link} className="w-full cursor-pointer">
       <button
         className={cn(
           "flex items-center justify-center gap-2 bg-green-700 rounded-full select-none text-white text-sm font-medium hover:bg-orange-400",

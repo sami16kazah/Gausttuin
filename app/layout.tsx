@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-
 import "./globals.css";
-import AnimatedWrapper from "@/components/pages/AnimatedWrapper";
 import ClientWrapper from "@/components/pages/ClientWrapper";
 
 export const metadata: Metadata = {

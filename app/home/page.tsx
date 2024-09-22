@@ -1,15 +1,17 @@
+'use server'
+import Footer from '@/components/pages/Footer/Footer';
+import Navbar from '@/components/pages/Navbar';
 
-import Footer from '@/components/pages/Footer';
-import AnimatedWrapper from '@/components/pages/AnimatedWrapper';
-
-export default function Page() {
+export default  async function Page() {
   return (
-    <div className='w-full h-screen overflow-y-auto'>
-      <p> Home Page </p>
-     <AnimatedWrapper key={1}><Footer></Footer></AnimatedWrapper>
-     <AnimatedWrapper key={2}><Footer></Footer></AnimatedWrapper>
-     <AnimatedWrapper key={3}><Footer></Footer></AnimatedWrapper>
-     <AnimatedWrapper key={4}><Footer></Footer></AnimatedWrapper>
+    <>
+    <Navbar></Navbar>
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-grow">
+        {/* Your main content goes here */}
+      </main>
+    <Footer />
     </div>
+    </>
   );
 }
