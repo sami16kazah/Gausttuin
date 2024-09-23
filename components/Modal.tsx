@@ -36,7 +36,7 @@ const Modal: React.FC<ModalProps> = ({ onClose, title, description,buttonDescrip
         <div className="flex flex-col justify-center align-middle w-full h-full">
           <div className="flex flex-col justify-center align-middle w-full h-full">
             <div className="text-xl text-center font-sans font-bold">{title}</div>
-            <div className="text-xl text-center font-sans mt-2">{description}</div>
+            <div className="text-lg text-center font-sans mt-2">{description}</div>
           </div>
           <div className="flex justify-center">
             {children}

@@ -1,9 +1,8 @@
-import React from 'react'
-import Image from 'next/image'
-import logo from '../../app/logo.png';
-import ResetPasswordForm from './Forms/ResetPasswordForm';
-import Link from 'next/link';
-import { FaArrowLeft } from 'react-icons/fa';
+import React from "react";
+import Image from "next/image";
+import logo from "../../app/logo.png";
+import ResetPasswordForm from "./Forms/ResetPasswordForm";
+import { Button } from "../button";
 export default function ResetPasswordCard() {
   return (
     <div className="flex justify-center items-center scale-90 w-full md:w-full lg:w-1/2 mb-6 md:mb-0">
@@ -13,15 +12,16 @@ export default function ResetPasswordCard() {
           Reset Your Account Password
         </p>
 
-      <ResetPasswordForm></ResetPasswordForm>
-      <hr className="bg-gray-300 w-full h-1 rounded-full my-3" />
-      <Link
-            href={"/auth/signin"}
-            className="text-green-700 hover:underline font-sans "
-          >
-           <FaArrowLeft ></FaArrowLeft>
-          </Link>
+        <ResetPasswordForm></ResetPasswordForm>
+        <hr className="bg-gray-300 w-full h-1 rounded-full my-3" />
+
+        <Button
+          link={"/auth/signin"}
+          className="bg-orange-500 hover:bg-green-700 w-full rounded-md"
+        >
+          Back
+        </Button>
+      </div>
     </div>
-  </div>
-  )
+  );
 }
