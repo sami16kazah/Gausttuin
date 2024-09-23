@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { Button } from "./button"; // assuming button is typed and defined
 import React from "react";
 
@@ -9,9 +9,10 @@ interface ModalProps {
   title?: string;
   description?: string;
   buttonDescription?: string;
+  children?:ReactNode
 }
 
-const Modal: React.FC<ModalProps> = ({ onClose, title, description,buttonDescription }) => {
+const Modal: React.FC<ModalProps> = ({ onClose, title, description,buttonDescription,children }) => {
   useEffect(() => {
     // Add overflow-hidden class to the body when modal is open
     document.body.classList.add("overflow-hidden");
@@ -38,7 +39,8 @@ const Modal: React.FC<ModalProps> = ({ onClose, title, description,buttonDescrip
             <div className="text-xl text-center font-sans mt-2">{description}</div>
           </div>
           <div className="flex justify-center">
-            <Button onClick={onClose} className="bg-green-500 md:w-1/3 lg:w-1/3 xl:w-1/3">
+            {children}
+            <Button onClick={onClose}  className="bg-green-500 md:w-1/3 lg:w-1/3 xl:w-1/3">
               {buttonDescription}
             </Button>
           </div>

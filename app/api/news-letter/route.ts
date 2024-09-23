@@ -10,7 +10,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    console.log("hi from server");
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/news-letters`,
       {
@@ -19,7 +18,6 @@ export async function POST(request: Request) {
         },
       }
     );
-    console.log(response.data);
     return NextResponse.json({ message: `Congratulations! You have successfully subscribed to our newsletter.` });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

@@ -7,13 +7,13 @@ export default function NewsLetter() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [show,setShow] = useState<boolean>(false);
+  const [show, setShow] = useState<boolean>(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
 
-  const handelClose = ()=>{
-    setShow((prev)=>!prev);
-  }
+  const handelClose = () => {
+    setShow((prev) => !prev);
+  };
 
   const validateEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple email regex
@@ -53,11 +53,35 @@ export default function NewsLetter() {
       setShow(true);
     } catch (error) {
       setError(
-        error instanceof Error ? "This email is already subscribed" : "An unknown error occurred"
+        error instanceof Error
+          ? "This email is already subscribed"
+          : "An unknown error occurred"
       );
     } finally {
       setLoading(false); // Reset loading state
     }
+  /*
+    try {
+      const response = await fetch("/api/Emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: `${email}`,
+          subject: "welcome to gustinn news letter",
+          name: "sami",
+          message: "you successfully subscirbed to our newsLetter",
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        console.log("Error sending email: " + result.error);
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }*/
   };
 
   return (
@@ -95,11 +119,22 @@ export default function NewsLetter() {
           </Button>
         </div>
       </div>
-      {emailError && <p className="text-red-500 font-sans font-semibold">{emailError}</p>}{" "}
+      {emailError && (
+        <p className="text-red-500 font-sans font-semibold">{emailError}</p>
+      )}{" "}
       {/* Display email error message */}
-      {error && <p className="text-red-500 font-sans font-semibold">{error}</p>}{" "}
+      {error && (
+        <p className="text-red-500 font-sans font-semibold">{error}</p>
+      )}{" "}
       {/* Display general error message */}
-      {successMessage && show && <Modal onClose={handelClose} title={"Subscribed Successfully"} description={successMessage} buttonDescription={"Accept"}></Modal>}{" "}
+      {successMessage && show && (
+        <Modal
+          onClose={handelClose}
+          title={"Subscribed Successfully"}
+          description={successMessage}
+          buttonDescription={"Accept"}
+        ></Modal>
+      )}{" "}
       {/* Display success message */}
     </form>
   );

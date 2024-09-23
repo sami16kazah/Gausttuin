@@ -3,30 +3,35 @@ import { FloatingLabel } from "@/components/floating-label";
 import { Button } from "@/components/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Modal from "@/components/Modal"; // Assume you have a Modal component
+
 export default function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
-  const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [resending, setResending] = useState(false);
   const router = useRouter();
 
-  // Regex to check if the email is valid
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Function to validate password strength (you can customize this)
   const isPasswordStrong = (password: string) => {
-    return password.length >= 8; // Example rule: password must be at least 8 characters long
+    return password.length >= 8;
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setEmailError("");
+    setConfirmed(false);
     setPasswordError("");
     setError(null);
     setLoading(true);
-  
+
     let isValid = true;
     if (!emailRegex.test(email)) {
       setEmailError("Please enter a valid email.");
@@ -37,34 +42,32 @@ export default function SignInForm() {
       isValid = false;
     }
     if (!isValid) return;
-  
+
     try {
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
+      const response = await fetch("/api/auth/signin", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          rememberMe: rememberMe, // Add this line
-        }),
+        body: JSON.stringify({ email, password, rememberMe }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Something went wrong');
+        throw new Error(errorData.message || "Something went wrong");
       }
-  
-      router.push('/home'); // Redirect after successful login
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+      router.push("/home");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      if (error.message.includes("confirmed")) {
+        setConfirmed(true);
+      }
       setError(error?.message.toString() || "An error occurred during login");
     } finally {
       setLoading(false);
     }
   };
-  
 
   const handleChange = (value: string, id: string) => {
     switch (id) {
@@ -79,6 +82,28 @@ export default function SignInForm() {
     }
   };
 
+  const handleResend = async () => {
+    setResending(true);
+    try {
+      await fetch("/api/auth/resend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+        cache: "no-cache",
+      });
+      setError(null); // Clear previous errors
+      // You can replace this with a nicer notification
+    } catch (error) {
+      setError("Failed to resend the code. Please try again.");
+    } finally {
+      setResending(false);
+      setShowModal(false);
+      setError("Code resended to your email check your spam section");
+    }
+  };
+
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit}>
@@ -86,7 +111,7 @@ export default function SignInForm() {
         <FloatingLabel
           className={`mt-4 w-full ${
             emailError || error ? "border-red-500" : ""
-          }`} // Add red border if emailError exists
+          }`}
           input_name={"Email"}
           type={"email"}
           value={email}
@@ -102,7 +127,7 @@ export default function SignInForm() {
         <FloatingLabel
           className={`mt-4 w-full ${
             passwordError || error ? "border-red-500" : ""
-          }`} // Add red border if passwordError exists
+          }`}
           input_name={"Password"}
           type={"password"}
           value={password}
@@ -136,6 +161,16 @@ export default function SignInForm() {
         {error && (
           <div className="text-red-500 text-sm font-sans mb-3 text-center font-semibold">
             {error}
+            {confirmed && (
+              <div>
+                <p
+                  className="hover:text-red-700 cursor-pointer hover:underline"
+                  onClick={() => setShowModal(true)}
+                >
+                  Resend the code
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -148,6 +183,20 @@ export default function SignInForm() {
           {loading ? "Signing in..." : "Sign in"}
         </Button>
       </form>
+
+      {/* Resend Confirmation Modal */}
+      {showModal && (
+        <Modal
+          onClose={() => setShowModal(false)}
+          title="Resend Verification Code"
+          description={`Are you sure you want to resend the verification code to ${email}?`}
+          buttonDescription="Cancel"
+        >
+          <Button onClick={handleResend} disabled={resending}>
+            {resending ? "Resending..." : "Resend Code"}
+          </Button>
+        </Modal>
+      )}
     </div>
   );
 }
