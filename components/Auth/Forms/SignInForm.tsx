@@ -35,10 +35,12 @@ export default function SignInForm() {
     let isValid = true;
     if (!emailRegex.test(email)) {
       setEmailError("Please enter a valid email.");
+      setLoading(false);
       isValid = false;
     }
     if (!isPasswordStrong(password)) {
       setPasswordError("Password must be at least 8 characters long.");
+      setLoading(false);
       isValid = false;
     }
     if (!isValid) return;
@@ -150,7 +152,7 @@ export default function SignInForm() {
             <span className="text-gray-700">Remember me</span>
           </label>
           <Link
-            href={"/forgetpassword"}
+            href={"/auth/confirmation/reset"}
             className="text-green-700 hover:underline"
           >
             Forget Password?
