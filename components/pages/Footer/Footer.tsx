@@ -9,8 +9,9 @@ import NewsLetter from "./NewsLetter";
 export default function Footer() {
   return (
 
-    <footer className="relative flex flex-col justify-center items-center align-middle w-full max-h-fit p-8" style={{ backgroundColor: 'rgba(221, 229, 218, 1)' }}>
-      <NewsLetter></NewsLetter>
+    <footer className="relative flex flex-col justify-center items-center align-middle w-full max-h-fit p-8 bg-gradient-to-b from-[#556D4C] via-[#97B08E] " >
+      
+      <NewsLetter ></NewsLetter>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-black text-sm w-full max-w-full mt-0 justify-center items-center">
         <div className="flex flex-col items-center md:items-start mb-6">
           <Image src={Logo} className="w-36 h-16 mb-2" alt="logo" />

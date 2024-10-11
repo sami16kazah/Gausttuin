@@ -174,12 +174,12 @@ export default function Navbar() {
           </li>
 
           <li className='p-2 md:p-0 md:ml-8'>
-            <Button link='/auth/signin' className='bg-white border border-b border-green-700 text-green-950 rounded-md'>
+            <Button link='/auth/signin' className='bg-white border border-b border-[#556D4C] text-green-950 rounded-md'>
               Login
             </Button>
           </li>
           <li className='p-2 md:p-0 md:ml-2'>
-            <Button link='/auth/signup' className='bg-green-700 border border-b border-white text-white rounded-md'>
+            <Button link='/auth/signup' className='bg-[#556D4C] border border-b border-white text-white rounded-md'>
               Sign Up
             </Button>
           </li>

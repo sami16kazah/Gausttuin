@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/button";
 import Modal from "@/components/Modal";
 
+
 export default function NewsLetter() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,8 +87,8 @@ export default function NewsLetter() {
 
   return (
     <form
-      className="flex flex-col items-center justify-center md:w-1/2 w-full h-fit p-8 rounded-lg mb-6"
-      style={{ backgroundColor: "rgba(85, 109, 76, 1)" }}
+      className="flex flex-col items-center justify-center md:w-1/2 w-full h-fit p-8 rounded-lg mb-6 "
+      style={{ backgroundImage:  `url('/images/NewsLetter.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center', height:'100%' ,width:'100%' }}
       onSubmit={handleSubmit} // Handle form submission
     >
       <h2 className="font-semibold font-sans text-white text-3xl text-center mb-2">
@@ -112,7 +113,7 @@ export default function NewsLetter() {
           />
           <Button
             type="submit"
-            className="md:w-auto w-full rounded-r-md md:rounded-l-none rounded-l-md md:mt-0 mt-2"
+            className="md:w-auto w-full rounded-r-md md:rounded-l-none rounded-l-md md:mt-0 mt-2 bg-[#556D4C]"
             disabled={loading} // Disable button when loading
           >
             {loading ? "Subscribing..." : "Subscribe"}
