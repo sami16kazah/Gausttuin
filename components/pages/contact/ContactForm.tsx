@@ -68,11 +68,12 @@ const handleSetLocation = () => {
         fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
           .then(response => response.json())
           .then(data => {
+            console.log(data)
             // Check if data is returned
             if (data && data.address) {
               // Get city name from the address
               const city = data.address.city || data.address.town || data.address.village || "Location found";
-              setLocation(city);
+              setLocation(`${city} , ${data.display_name}`);
             } else {
               setLocation("Unable to retrieve location.");
             }
