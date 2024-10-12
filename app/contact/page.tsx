@@ -1,16 +1,17 @@
-"use server"; // This directive indicates that the following code runs on the server side
+"use server"; // Server directive for Next.js
 import { Accordion } from "@/components/Accordion";
+import ContactCard from "@/components/pages/contact/ContactCard";
+import ContactForm from "@/components/pages/contact/ContactForm";
 import Navbar from "@/components/pages/Navbar";
 import dynamic from "next/dynamic";
 
-// Lazy load component with Next.js dynamic import
+// Lazy load Footer component
 const LazyComponent = dynamic(() => import("@/components/pages/Footer/Footer"), {
-  loading: () => <p>Loading...</p>, // You can define a fallback UI while loading
-  ssr: false, // Set to false if you don't want server-side rendering
+  loading: () => <p>Loading...</p>,
+  ssr: false, // No server-side rendering
 });
 
-
-// Fetch data with correct filtering
+// Fetch questions by location
 async function fetchQuestionsByLocation(location: string) {
   try {
     const response = await fetch(
@@ -22,24 +23,25 @@ async function fetchQuestionsByLocation(location: string) {
       throw new Error(`Error fetching data: ${response.statusText}`);
     }
     const data = await response.json();
-    return data.data; // Access the data property in the response
+    return data.data;
   } catch (error) {
     console.error(error);
     return [];
   }
 }
 
-// Use async function for data fetching
+// Page component
 export default async function Page() {
-  // Fetch data from the API
-  const locationValue = "contact"; // Set the desired location value
-  const items = await fetchQuestionsByLocation(locationValue); // Fetch questions based on location
-  // Ensure the items are formatted correctly for Accordion
+  // Fetch data for the accordion
+  const locationValue = "contact"; // Location filter
+  const items = await fetchQuestionsByLocation(locationValue);
+
+  // Format fetched items for Accordion
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formattedItems = items.map((item: any) => ({
-    id: item.id, 
-    label: item.attributes.label, 
-    content: item.attributes.content, 
+    id: item.id,
+    label: item.attributes.label,
+    content: item.attributes.content,
   }));
 
   return (
@@ -49,14 +51,14 @@ export default async function Page() {
         <main className="flex-grow">
           {/* New Background using Gradient and Shape Elements */}
           <div className="relative flex justify-center items-center w-full h-96 bg-cover bg-[url(/images/ContactUs.png)] bg-center">
-          <div className="absolute bg-orange-500 opacity-25 h-96 w-full"></div>
+            <div className="absolute bg-orange-500 opacity-25 h-96 w-full"></div>
 
             {/* Decorative Wave Element at the Bottom */}
             <div className="absolute bottom-0 left-0 w-full h-16 bg-white rounded-t-full"></div>
 
             {/* Contact Us Title */}
             <p
-              className="relative text-white text-7xl font-mono z-10 mb-10 mr-auto ml-10"
+              className="relative text-white text-6xl font-mono z-10 mb-10 mr-auto ml-10"
               style={{
                 fontStyle: "normal",
                 fontWeight: "500",
@@ -69,13 +71,30 @@ export default async function Page() {
             </p>
           </div>
 
-          <div className=" flex flex-col justify-center items-center">
-            <p className="text-5xl text-orange-300 font-semibold">Get In Touch</p>
-            <p className="text-3xl text-black text-center font-thin w-3/4 m-2">Got a question or want to plan the perfect event with us? we are here to help make your experience unforgettable!</p>
-            <div className="relative shadow-lg rounded-md w-96 h-96"></div>
+          {/* Outer Card with Contact Form and Contact Card */}
+          <div className="flex flex-col items-center mt-10">
+            <p className="text-5xl text-orange-300 font-semibold mb-4">Get In Touch</p>
+            <p className="text-3xl text-black text-center font-thin w-3/4 mb-6">
+              Got a question or want to plan the perfect event with us? We are here to help make your experience unforgettable!
+            </p>
+
+            {/* Outer Card Container */}
+            <div className="relative shadow-lg rounded-lg w-4/5 bg-white p-8 mb-10">
+              <div className="w-full h-full flex flex-col md:flex-row justify-around gap-6">
+                {/* Contact Card */}
+                <div className="w-full md:w-1/2">
+                  <ContactCard />
+                </div>
+
+                {/* Contact Form */}
+                <div className="w-full md:w-1/2">
+                  <ContactForm />
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Pass the formatted items array to the Accordion */}
+          {/* Frequently Asked Questions */}
           {formattedItems && (
             <>
               <div>

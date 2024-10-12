@@ -53,7 +53,7 @@ export default function SignIn() {
         {/* Right column (hidden on small screens) */}
         <div className="hidden md:flex md:flex-col  w-full md:w-1/2 justify-start items-center">
           <p className="flex justify-center items-center text-orange-500 font-sans font-bold text-4xl">
-            Welcom To De Guesttuin
+            Welcome To De Guestuin
           </p>
           <div className="w-64 h-64 flex justify-center">
             <Sliders></Sliders>
