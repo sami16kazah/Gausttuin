@@ -2,6 +2,7 @@
 import { Button } from "@/components/button";
 import { FloatingLabel } from "@/components/floating-label";
 import Modal from "@/components/Modal";
+import { MdMyLocation } from "react-icons/md";
 import React, { useState } from "react";
 
 export default function ContactForm() {
@@ -55,6 +56,43 @@ export default function ContactForm() {
     }
   };
 
+  // Quick set location handler
+// Quick set location handler
+const handleSetLocation = () => {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        // Use the OpenStreetMap Nominatim API to get location details
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
+          .then(response => response.json())
+          .then(data => {
+            // Check if data is returned
+            if (data && data.address) {
+              // Get city name from the address
+              const city = data.address.city || data.address.town || data.address.village || "Location found";
+              setLocation(city);
+            } else {
+              setLocation("Unable to retrieve location.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching address:", error);
+            setLocation("Location found, but unable to retrieve address.");
+          });
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        setError("Unable to retrieve your location. Please ensure location services are enabled.");
+      }
+    );
+  } else {
+    setError("Geolocation is not supported by this browser.");
+  }
+};
+
+
   const validateForm = () => {
     const formErrors: { [key: string]: string } = {};
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -102,8 +140,8 @@ export default function ContactForm() {
         const errorData = await response.json();
         throw new Error(errorData.message || "Something went wrong");
       }
-      setTitle("You demanded a privet booking ");
-      setDiscription(" We recived your request !");
+      setTitle("You demanded a private booking ");
+      setDiscription(" We received your request !");
       setShow(true);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -128,7 +166,7 @@ export default function ContactForm() {
           title={title!}
           description={description!}
           buttonDescription={"Accept"}
-        ></Modal>
+        />
       )}
       <form
         className="flex flex-col w-full mt-4 space-y-6"
@@ -186,7 +224,7 @@ export default function ContactForm() {
         </div>
         {/* Location and Date */}
         <div className="flex flex-wrap justify-between gap-4">
-          <div className="w-full sm:w-[38%]">
+          <div className="w-full sm:w-[38%] flex">
             <FloatingLabel
               input_name="Location"
               type="text"
@@ -196,6 +234,8 @@ export default function ContactForm() {
               onChange={(value) => handleChange(value, "location")}
               error={errors.location}
             />
+            <MdMyLocation onClick={handleSetLocation} className=" cursor-pointer">
+            </MdMyLocation>
           </div>
           <div className="w-full sm:w-[38%]">
             <FloatingLabel
@@ -224,7 +264,7 @@ export default function ContactForm() {
           </div>
           <div className="w-full sm:w-[38%]">
             <FloatingLabel
-              input_name="Groupe Number"
+              input_name="Group Number"
               type="text"
               id="group"
               value={group}
@@ -250,7 +290,7 @@ export default function ContactForm() {
           <div className="text-center text-red-500 mb-3 font-sans font-semibold">
             {error}
           </div>
-        )}{" "}
+        )}
         {/* Show general error message */}
         <div className="flex justify-center">
           <Button
