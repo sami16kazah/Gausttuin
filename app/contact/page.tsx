@@ -95,7 +95,7 @@ export default async function Page() {
           </div>
 
           {/* Frequently Asked Questions */}
-          {formattedItems && (
+          {formattedItems && formattedItems.length > 0 && (
             <>
               <div>
                 <p

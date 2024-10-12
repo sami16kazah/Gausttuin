@@ -14,11 +14,11 @@ export default function Navbar() {
 
   // Function to toggle accordion section, ensuring only one is open at a time
   const toggleAccordion = (section: string) => {
-    setOpenSection(prev => (prev === section ? null : section)); // Close if it's already open, otherwise open the new one
+    setOpenSection((prev) => (prev === section ? null : section)); // Close if it's already open, otherwise open the new one
   };
 
   return (
-    <nav className= {`${isMenuOpen ? '' : 'sticky'} top-0 bg-white shadow-md p-4  z-50`}>
+    <nav className={`${isMenuOpen ? 'fixed' : 'sticky'} top-0 bg-white shadow-md p-4 z-50 w-full`}>
       <div className='container mx-auto flex justify-between items-center'>
         {/* Logo */}
         <div>
@@ -39,7 +39,9 @@ export default function Navbar() {
           } md:translate-x-0`}
         >
           <li className='p-4 md:p-0 md:ml-8'>
-            <a href='#' className='text-gray-700 hover:text-orange-700'>Home</a>
+            <a href='#' className='text-gray-700 hover:text-orange-700'>
+              Home
+            </a>
             <hr className='w-full h-[0.5] mt-5 bg-gray-400 md:hidden'></hr>
           </li>
 
@@ -80,9 +82,7 @@ export default function Navbar() {
                 </a>
               </li>
             </ul>
-            {openSection !== 'shop' && (
-              <hr className='w-full h-[0.5] mt-5 bg-gray-400 md:hidden'></hr>
-            )}
+            {openSection !== 'shop' && <hr className='w-full h-[0.5] mt-5 bg-gray-400 md:hidden'></hr>}
           </li>
 
           {/* Accordion for Booking */}
@@ -102,7 +102,7 @@ export default function Navbar() {
             </button>
             <ul
               className={`transition-all duration-500 overflow-hidden ${
-                openSection === 'booking' ?'max-h-40 max-w-52 md:shadow-md md:w-52 p-2' : 'max-h-0 max-w-0'
+                openSection === 'booking' ? 'max-h-40 max-w-52 md:shadow-md md:w-52 p-2' : 'max-h-0 max-w-0'
               } md:absolute mt-2 bg-white  space-y-5 w-full `}
             >
               <li>
@@ -122,9 +122,7 @@ export default function Navbar() {
                 </a>
               </li>
             </ul>
-            {openSection !== 'booking' && (
-              <hr className='w-full h-[0.5] mt-5 bg-gray-400 md:hidden'></hr>
-            )}
+            {openSection !== 'booking' && <hr className='w-full h-[0.5] mt-5 bg-gray-400 md:hidden'></hr>}
           </li>
 
           {/* Accordion for Support */}
@@ -164,13 +162,13 @@ export default function Navbar() {
                 </a>
               </li>
             </ul>
-            {openSection !== 'support' && (
-              <hr className='w-full h-[0.5] mt-5 bg-gray-400 md:hidden'></hr>
-            )}
+            {openSection !== 'support' && <hr className='w-full h-[0.5] mt-5 bg-gray-400 md:hidden'></hr>}
           </li>
 
           <li className='p-4 md:p-0 md:ml-8'>
-            <a href='#' className='text-gray-700  hover:text-orange-700'>About</a>
+            <a href='#' className='text-gray-700  hover:text-orange-700'>
+              About
+            </a>
           </li>
 
           <li className='p-2 md:p-0 md:ml-8'>
