@@ -28,11 +28,11 @@ export const Accordion: FC<AccordionProps> = ({ items }) => {
     const icon = (
       <span className="text-2xl transition-transform duration-300">
         {isExpanded ? (
-          <Button className="rounded-md bg-gradient-to-tr from-[#556D4C] via-[#AFC2A7] text-white">
+          <Button className="bg-gradient-to-r from-[#556D4C] to-[#97B08E] rounded-md hover:from-[#97B08E] hover:to-[#556D4C] transition-colors duration-300 ">
             <GoChevronDown />
           </Button>
         ) : (
-          <Button className="rounded-md bg-gradient-to-tr from-[#556D4C] via-[#AFC2A7] text-white">
+          <Button className="bg-gradient-to-r from-[#556D4C] to-[#97B08E] rounded-md hover:from-[#97B08E] hover:to-[#556D4C] transition-colors duration-300 ">
             +
           </Button>
         )}

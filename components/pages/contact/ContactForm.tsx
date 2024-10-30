@@ -190,7 +190,7 @@ const handleSetLocation = () => {
             <FloatingLabel
               input_name="Last Name"
               type="text"
-              className="border-t-0 border-l-0 border-r-0 rounded-none w-full"
+              className="border-t-0 border-l-0 border-r-0 rounded-none w-full "
               id="lastName"
               value={lastName}
               onChange={(value) => handleChange(value, "lastName")}
@@ -297,7 +297,7 @@ const handleSetLocation = () => {
           <Button
             type="submit"
             disabled={loading}
-            className="bg-gradient-to-r from-[#556D4C] to-[#97B08E] rounded-md hover:from-[#97B08E] hover:to-[#556D4C] transition-colors duration-300 ease-in-out transform hover:scale-105"
+            className="bg-gradient-to-r from-[#556D4C] to-[#97B08E] rounded-md hover:from-[#97B08E] hover:to-[#556D4C] transition-colors duration-300 "
           >
             {loading ? "Sending ..." : "Send"}
           </Button>

@@ -5,6 +5,7 @@ import Logo from '../../app/logo.png';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { IoMdClose, IoIosArrowDown, IoIosArrowUp } from 'react-icons/io'; // Import arrow icons
 import { Button } from '../button';
+import Link from 'next/link';
 
 export default function Navbar() {
   // State for menu open/close
@@ -39,9 +40,9 @@ export default function Navbar() {
           } md:translate-x-0`}
         >
           <li className='p-4 md:p-0 md:ml-8'>
-            <a href='#' className='text-gray-700 hover:text-orange-700'>
+            <Link href='/home' className='text-gray-700 hover:text-orange-700'>
               Home
-            </a>
+            </Link>
             <hr className='w-full h-[0.5] mt-5 bg-gray-400 md:hidden'></hr>
           </li>
 
@@ -66,12 +67,12 @@ export default function Navbar() {
               } md:absolute mt-2  bg-white space-y-5  w-full `}
             >
               <li>
-                <a
-                  href='#'
+                <Link
+                  href='/shop'
                   className='text-gray-600 hover:text-orange-700 hover:bg-orange-100 transition-colors duration-300 p-2 block rounded-md'
                 >
                   Product 1
-                </a>
+                </Link>
               </li>
               <li>
                 <a
@@ -106,12 +107,12 @@ export default function Navbar() {
               } md:absolute mt-2 bg-white  space-y-5 w-full `}
             >
               <li>
-                <a
-                  href='#'
+                <Link
+                  href='/contact'
                   className='text-gray-600 hover:text-orange-700 hover:bg-orange-100 transition-colors duration-300 p-2 block rounded-md'
                 >
                   Product 1
-                </a>
+                </Link>
               </li>
               <li>
                 <a

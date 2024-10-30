@@ -58,7 +58,7 @@ export default async function Page() {
 
             {/* Contact Us Title */}
             <p
-              className="relative text-white text-6xl font-mono z-10 mb-10 mr-auto ml-10"
+              className="relative text-white text-5xl font-mono z-10 mb-10 mr-auto ml-10"
               style={{
                 fontStyle: "normal",
                 fontWeight: "500",
