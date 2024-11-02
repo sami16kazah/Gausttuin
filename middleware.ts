@@ -13,6 +13,7 @@ export async function middleware(request: NextRequest) {
   // Check if the request path is one of the protected paths
   if (protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path))) {
     // Check if the cookie exists
+
     const token = request.cookies.get("token");
 
     if (!token) {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FloatingLabel } from "@/components/floating-label";
 import { Button } from "@/components/button";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import Modal from "@/components/Modal"; // Assume you have a Modal component
 
 export default function SignInForm() {
@@ -16,8 +16,7 @@ export default function SignInForm() {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [resending, setResending] = useState(false);
-  const router = useRouter();
-
+ 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const isPasswordStrong = (password: string) => {
@@ -59,7 +58,7 @@ export default function SignInForm() {
         throw new Error(errorData.message || "Something went wrong");
       }
 
-      router.push("/home");
+      window.location.href = "/home";
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.message.includes("confirmed")) {
