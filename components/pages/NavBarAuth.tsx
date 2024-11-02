@@ -9,5 +9,6 @@ export  async function NavBarAuth() {
 export  async function signOut(){
     const cookieStore = cookies();
     cookieStore.delete('token');
+    cookieStore.delete('user');
     return true;
 }

@@ -15,7 +15,7 @@ const LazyComponent = dynamic(() => import("@/components/pages/Footer/Footer"), 
 // Page component
 export default async function Page() {
 
- const userLoggedIn = headers().get("X-Is-Logged-In");
+ const userLoggedIn = headers().get("X-name");
 
   return (
     <>
