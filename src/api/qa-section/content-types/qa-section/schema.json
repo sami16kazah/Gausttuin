@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "qa_sections",
+  "info": {
+    "singularName": "qa-section",
+    "pluralName": "qa-sections",
+    "displayName": "QASection",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "string",
+      "required": true
+    },
+    "location": {
+      "type": "enumeration",
+      "enum": [
+        "contact",
+        "book",
+        "support"
+      ]
+    }
+  }
+}
