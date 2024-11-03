@@ -11,6 +11,8 @@ const JWT_SECRET = new TextEncoder().encode(
 // Define which paths should be protected
 const protectedPaths = ["/shop"]; // Add any routes that need protection
 
+const checkedPaths = ["/auth"];
+
 export async function middleware(request: NextRequest) {
   // Check if the request path is one of the protected paths
   if (
@@ -38,6 +40,33 @@ export async function middleware(request: NextRequest) {
       console.error("Token verification failed:", error);
       return NextResponse.redirect(new URL("/auth/signin", request.url));
     }
+  }
+
+  else if (
+    checkedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
+  ) {
+    // Check if the cookie exists
+    const AuthToken = request.cookies.get("token");
+    const UserToken = request.cookies.get("user");
+    if (!AuthToken || !UserToken) {
+      // Redirect to the login page if the token is not present
+      return ;
+    }
+    try {
+      // Verify and decode the token using jose
+      const { payload } = await jwtVerify(AuthToken.value, JWT_SECRET);
+      const user = JSON.parse(UserToken.value);
+      const response = NextResponse.next();
+      response.headers.set("X-Is-Logged-In", "true");
+      response.headers.set("X-name", user.name);
+      response.headers.set("X-email", user.email); // Set header for logged in
+      return NextResponse.redirect(new URL("/home", request.url)); // Optionally log the decoded payload
+    } catch (error) {
+      // If token verification fails, redirect to login
+      console.error("Token verification failed:", error);
+      return ;
+    }
+
   }
 
   else{

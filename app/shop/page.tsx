@@ -7,6 +7,8 @@ import TipImage from "../../public/images/shop-tips.png";
 import MainBackground from "@/components/shop/MainBackground";
 import { Feature } from "@/components/shop/Feature";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { CategoryCard } from "@/components/shop/CategoryCard";
+import BriarImage from "../../public/images/shop-section.png"
 // Lazy load Footer component
 const LazyComponent = dynamic(
   () => import("@/components/pages/Footer/Footer"),
@@ -31,13 +33,43 @@ export default async function Page() {
               alt="no shop tipes image"
             ></Image>
           </div>
-          <Feature text={"Shop By Category"}></Feature>
+          <Feature text={"Shop By Category"}>
+          <CategoryCard name="Name Wine" photo="https://res.cloudinary.com/dqlgwevcv/image/upload/v1730569646/Property_1_Variant2_3_567b66241b.png"></CategoryCard>
+          <CategoryCard name="Name Wine" photo="https://res.cloudinary.com/dqlgwevcv/image/upload/v1730569646/Property_1_Variant2_3_567b66241b.png"></CategoryCard>
+          <CategoryCard name="Name Wine" photo="https://res.cloudinary.com/dqlgwevcv/image/upload/v1730569646/Property_1_Variant2_3_567b66241b.png"></CategoryCard>
+          <CategoryCard name="Name Wine" photo="https://res.cloudinary.com/dqlgwevcv/image/upload/v1730569646/Property_1_Variant2_3_567b66241b.png"></CategoryCard>
+          <CategoryCard name="Name Wine" photo="https://res.cloudinary.com/dqlgwevcv/image/upload/v1730569646/Property_1_Variant2_3_567b66241b.png"></CategoryCard>
+          <CategoryCard name="Name Wine" photo="https://res.cloudinary.com/dqlgwevcv/image/upload/v1730569646/Property_1_Variant2_3_567b66241b.png"></CategoryCard>
+          </Feature>
+
+          <Image className="w-full m-0 p-0 block" src={BriarImage} alt="bariar image "></Image>
+
+          <Feature text="Products">
           <ProductCard
             name="Name Wines"
-            price={200}
-            description="the finest from 1990"
+            price={124.9}
+            description="the finest from 1990 one of the finniest in the whole world !"
             photo="https://res.cloudinary.com/dqlgwevcv/image/upload/v1730569646/Property_1_Variant2_3_567b66241b.png"
           ></ProductCard>
+
+<ProductCard
+            name="Name Wines"
+            price={124.9}
+            description="the finest from 1990 one of the finniest in the whole world !"
+            photo="https://res.cloudinary.com/dqlgwevcv/image/upload/v1730569646/Property_1_Variant2_3_567b66241b.png"
+          ></ProductCard>
+
+<ProductCard
+           
+            name="Name Wines"
+            isNew={"true"}
+            price={124.9}
+            description="the finest from 1990 one of the finniest in the whole world ! hahaahaahahhahahahhahahaha shahshsahshahsahshashsah"
+            photo="https://res.cloudinary.com/dqlgwevcv/image/upload/v1730569646/Property_1_Variant2_3_567b66241b.png"
+          ></ProductCard>
+          </Feature>
+          
+
         </main>
         <LazyComponent />
       </div>
