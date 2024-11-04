@@ -46,14 +46,10 @@ export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center ml-20">
+      <div className="flex items-center justify-center w-full max-w-[80%] mx-auto">
         <Swiper
           modules={[Navigation, Pagination]}
-          style={{
-            "--swiper-pagination-color": "#FF914D", // Color for active bullets
-            "--swiper-pagination-bullet-inactive-opacity": "0.4", // Opacity for inactive bullets
-          }}
-          spaceBetween={2}
+          spaceBetween={1}
           slidesPerView={3}
           navigation={{
             prevEl: prevRef.current,
@@ -80,17 +76,20 @@ export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
             swiper.pagination.update();
           }}
           breakpoints={{
+            124: { slidesPerView: 1 },
+            280: { slidesPerView: 1 },
+            320: { slidesPerView: 1 },
             480: { slidesPerView: 1 },
             640: { slidesPerView: 1.5 },
             768: { slidesPerView: 2 },
             1024: { slidesPerView: 3 },
           }}
-          className="flex items-center justify-center flex-wrap w-full"
+          className="flex items-center justify-center  max-w-[80%] w-full mx-auto "
         >
           {children.map((child, index) => (
             <SwiperSlide
               key={index}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center text-center space-x-2"
             >
               {child}
             </SwiperSlide>
