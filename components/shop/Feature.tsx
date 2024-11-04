@@ -1,13 +1,14 @@
 "use client";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useRef } from "react";
 import WineStain from "../../public/images/wine-stain.png";
 import Image from "next/image";
 import HrImage from "../../public/images/hr.png";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
-
+import "swiper/css/pagination";
+import { Navigation, Pagination } from "swiper/modules";
+import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 
 interface FeatureProps {
   text: string;
@@ -15,9 +16,12 @@ interface FeatureProps {
 }
 
 export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
+  const paginationRef = useRef<HTMLDivElement>(null);
+
   return (
     <div className="flex flex-grow flex-col justify-start bg-white rounded-lg shadow-lg p-6 m-0">
-      {/* Header with Title and Horizontal Line */}
       <div className="flex justify-between items-start m-0 p-0">
         <div className="flex flex-col">
           <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF914D] to-[#556D4C] text-2xl font-semibold">
@@ -29,8 +33,6 @@ export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
             alt="Horizontal rule image"
           />
         </div>
-
-        {/* Decorative Image */}
         <div
           className="flex items-center justify-end ml-4"
           style={{ marginTop: "-20px" }}
@@ -43,33 +45,81 @@ export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
           />
         </div>
       </div>
-   <div className="flex items-center justify-center ml-20">
-      {/* Swiper for Cards */}
-      <Swiper
-        modules={[Navigation]}
-        spaceBetween={2}
-        slidesPerView={3}
-        breakpoints={{
-          // Responsive breakpoints
-          // Small screens
-          480:{ slidesPerView: 1 },
-          640:{ slidesPerView: 1.5 },
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-        }}
 
-        className="flex items-center justify-center flex-wrap w-full"
-      >
-        {children.map((child, index) => (
-          <SwiperSlide key={index} className="flex items-center justify-center">
-            {child}
-          </SwiperSlide>
-        ))}
+      <div className="flex items-center justify-center ml-20">
+        <Swiper
+          modules={[Navigation, Pagination]}
+          style={{
+            "--swiper-pagination-color": "#FF914D", // Color for active bullets
+            "--swiper-pagination-bullet-inactive-opacity": "0.4", // Opacity for inactive bullets
+          }}
+          spaceBetween={2}
+          slidesPerView={3}
+          navigation={{
+            prevEl: prevRef.current,
+            nextEl: nextRef.current,
+          }}
+          pagination={{
+            el: paginationRef.current,
+            clickable: true,
+          }}
+          onBeforeInit={(swiper) => {
+            const navigation = swiper.params.navigation as {
+              prevEl?: HTMLElement | null;
+              nextEl?: HTMLElement | null;
+            };
+            navigation.prevEl = prevRef.current;
+            navigation.nextEl = nextRef.current;
 
+            const pagination = swiper.params.pagination as {
+              el?: HTMLElement | null;
+            };
+            pagination.el = paginationRef.current;
 
+            swiper.navigation.update();
+            swiper.pagination.update();
+          }}
+          breakpoints={{
+            480: { slidesPerView: 1 },
+            640: { slidesPerView: 1.5 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          }}
+          className="flex items-center justify-center flex-wrap w-full"
+        >
+          {children.map((child, index) => (
+            <SwiperSlide
+              key={index}
+              className="flex items-center justify-center"
+            >
+              {child}
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
 
-      </Swiper>
+      <div className="flex items-center justify-center mt-4 ">
+        <button
+          ref={prevRef}
+          className="text-orange-500 hover:text-orange-600 transition duration-300"
+        >
+          <IoIosArrowDropleft size={40} />
+        </button>
 
+        {/* Pagination bullets positioned between the arrows */}
+        <div className="w-fit h-10">
+          <div
+            ref={paginationRef}
+            className="flex  m-2 p-2 w-fit h-fit gap-1 "
+          ></div>
+        </div>
+
+        <button
+          ref={nextRef}
+          className="text-orange-500 hover:text-orange-600 transition duration-300"
+        >
+          <IoIosArrowDropright size={40} />
+        </button>
       </div>
     </div>
   );

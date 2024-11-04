@@ -52,3 +52,17 @@ input:-webkit-autofill:focus {
   border-color: #4caf50 !important; /* Ensure the border color stays consistent when focused */
   box-shadow: 0 0 0 px rgba(76, 175, 80, 0.5) !important; /* Customize focus shadow */
 }
+
+.swiper-pagination {
+  --swiper-pagination-color: #FF914D;
+}
+
+/* Override the default Swiper pagination bullet colors */
+.swiper-pagination-bullet  {
+  background-color: rgba(255, 145, 77, 0.4) !important  ;/* Inactive bullet color */
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #FF914D !important ; /* Active bullet color */
+  opacity: 1; /* Ensures active bullet is fully opaque */
+}
