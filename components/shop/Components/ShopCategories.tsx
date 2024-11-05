@@ -3,6 +3,7 @@
 "use server";
 import { Feature } from "@/components/shop/Feature";
 import { CategoryCard } from "../CategoryCard";
+import Link from "next/link";
 
 async function fetchShopCategories() {
   try {
@@ -44,11 +45,16 @@ const ShopCategories = async () => {
   return items.length > 0 ? (
     <Feature text="Categories">
       {items.map((item: any) => (
-        <CategoryCard
+        <Link
           key={item.id}
-          name={item.name}
-          photo={item.photo} // Fallback for missing photos
-        />
+          href={`/shop/category?id=${item.id}&name=${item.name}`}
+        >
+          <CategoryCard
+            key={item.id}
+            name={item.name}
+            photo={item.photo} // Fallback for missing photos
+          />
+        </Link>
       ))}
     </Feature>
   ) : (

@@ -3,9 +3,6 @@
 "use server"
 import { Feature } from "@/components/shop/Feature";
 import { ProductCard } from "@/components/shop/ProductCard";
-
-
-
 async function fetchShopItems() {
     try {
       const response = await fetch(
