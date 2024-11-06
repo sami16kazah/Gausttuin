@@ -4,7 +4,8 @@
   "info": {
     "singularName": "shop-item",
     "pluralName": "shop-items",
-    "displayName": "ShopItem"
+    "displayName": "ShopItem",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -24,18 +25,34 @@
       "required": true
     },
     "Photo": {
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ],
       "type": "media",
       "multiple": true,
-      "required": true
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "Quantity": {
       "type": "integer"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::category.category"
+    },
+    "Date": {
+      "type": "date",
+      "required": true
+    },
+    "Discount": {
+      "type": "integer"
+    },
+    "payment": {
+      "type": "relation",
+      "relation": "manyToOne",  
+      "target": "api::payment.payment",
+      "inversedBy": "shop_items"
     }
+
   }
 }

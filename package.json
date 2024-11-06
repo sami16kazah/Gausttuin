@@ -11,6 +11,7 @@
     "deploy": "strapi deploy"
   },
   "dependencies": {
+    "@mollie/api-client": "^4.1.0",
     "@strapi/plugin-cloud": "4.25.11",
     "@strapi/plugin-email": "^4.25.11",
     "@strapi/plugin-i18n": "4.25.11",
