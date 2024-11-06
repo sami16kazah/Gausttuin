@@ -48,6 +48,7 @@ const  ShopProducts = async () => {
     <Feature text="Products">
       {items.map((item:any) => (
         <ProductCard
+         id={item.id}
           key={item.id}
           name={item.name}
           price={item.price}

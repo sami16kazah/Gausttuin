@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// components/CheckoutSummary.tsx
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
 interface CartItem {
+  id: number;
   name: string;
   price: string;
   photo: string;
@@ -13,35 +13,66 @@ interface CartItem {
 interface CheckoutSummaryProps {
   cartItems: CartItem[];
   calculateSubtotal: () => number;
-  handleCheckout: () => void;
 }
 
-const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ cartItems, calculateSubtotal, handleCheckout }) => {
-  const [couponCode, setCouponCode] = useState<string>('');
-  const [discount, setDiscount] = useState<number>(0);
+const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
+  cartItems,
+  calculateSubtotal,
+}) => {
+  const [couponCode, setCouponCode] = useState<string>("");
+  const [discount, setDiscount] = useState<number>(0); // Discount in percentage
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleApplyCoupon = async () => {
-    setError(null);
-    setSuccessMessage(null);
-    
-    const totalAmount = calculateSubtotal();
-    
+  const handleCheckout = async () => {
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/apply-coupon`, {
-        code: couponCode,
-        totalAmount,
-      });
-      setDiscount(response.data.discountPercentage);
-      setSuccessMessage(response.data.message);
-    } catch (err:any) {
-      setError(err.response?.data?.message || "An error occurred");
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/payment`, // Endpoint URL
+        {
+          cartItems,       // Cart items from state
+          discount ,        // Discount percentage
+          couponCode,      // Applied coupon code
+        }
+      );
+  
+      // Redirect to the payment URL provided by Mollie
+      window.location.href = response.data.paymentUrl;
+    } catch (error) {
+      console.error("Checkout failed:", error);
+      setError("Failed to initiate payment. Please try again.");
     }
   };
 
+  const handleApplyCoupon = async () => {
+    setError(null); // Reset error state
+    setSuccessMessage(null); // Reset success message
+    calculateSubtotal();
+
+    try {
+      // Make POST request to validate coupon
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/coupon/validate`,
+        {
+          code: couponCode,
+        }
+      );
+
+      // Set discount and success message based on response
+      setDiscount(response.data.discount); // Assuming discount is a percentage (0-100)
+      setSuccessMessage(response.data.message);
+    } catch (err: any) {
+      console.log(err);
+      // Handle errors and display error message from response
+      setError(
+        err.response?.data?.message ||
+          "An error occurred while applying the coupon."
+      );
+    }
+  };
+
+  // Calculate total after applying discount
   const totalAmount = calculateSubtotal();
-  const discountedTotal = totalAmount - (totalAmount * discount) / 100;
+  const discountedTotal = totalAmount - discount;
 
   return (
     <div className="max-w-md w-full bg-white p-4 rounded-md shadow-md border border-[#5f8053] mx-auto">
@@ -53,7 +84,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ cartItems, calculateS
       </div>
       <div className="flex justify-between my-2 py-2">
         <p>Discount:</p>
-        <p className="text-green-600">-{discount > 0 ? `${discount}%` : '0%'}</p>
+        <p className="text-green-600">-${discount > 0 ? `${discount}` : "0"}</p>
       </div>
       <p className="font-bold">Give code</p>
       <div className="flex items-center mt-2">
@@ -61,7 +92,8 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ cartItems, calculateS
           type="text"
           className="border rounded-l p-2 flex-1 bg-[#f0f5e8]"
           placeholder="Enter Your Code"
-          onChange={(e) => setCouponCode(e.target.value)}
+          value={couponCode} // Bind the input value to state
+          onChange={(e) => setCouponCode(e.target.value)} // Update couponCode on change
         />
         <button
           onClick={handleApplyCoupon}
@@ -71,7 +103,9 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({ cartItems, calculateS
         </button>
       </div>
       {error && <p className="text-red-500 mt-2">{error}</p>}
-      {successMessage && <p className="text-green-600 mt-2">{successMessage}</p>}
+      {successMessage && (
+        <p className="text-green-600 mt-2">{successMessage}</p>
+      )}
       <hr className="mt-12 p-2" />
       <div className="flex justify-between my-2 py-2">
         <p className="mt-2 leading-relaxed">Total price:</p>

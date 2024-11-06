@@ -89,15 +89,15 @@ export default function Navbar() {
                   href="/shop"
                   className="text-gray-600 hover:text-orange-700 hover:bg-orange-100 transition-colors duration-300 p-2 block rounded-md"
                 >
-                  Product 1
+                  Browse
                 </Link>
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/shop/cart"
                   className="text-gray-600 hover:text-orange-700 hover:bg-orange-100 transition-colors duration-300 p-2 block rounded-md"
                 >
-                  Product 2
+                  Cart
                 </a>
               </li>
             </ul>
@@ -133,7 +133,7 @@ export default function Navbar() {
                   href="/contact"
                   className="text-gray-600 hover:text-orange-700 hover:bg-orange-100 transition-colors duration-300 p-2 block rounded-md"
                 >
-                  Product 1
+                  Group Booking
                 </Link>
               </li>
               <li>

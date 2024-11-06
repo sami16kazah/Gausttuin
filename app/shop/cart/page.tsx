@@ -7,6 +7,7 @@ import Navbar from "@/components/pages/Navbar";
 import CheckoutSummary from "@/components/shop/Components/Checkout";
 
 interface CartItem {
+  id:number
   name: string;
   price: string;
   photo: string;
@@ -50,10 +51,7 @@ const Cart = () => {
     );
   };
 
-  const handleCheckout = () => {
-    console.log("Proceed to checkout");
-    // Implement checkout logic here
-  };
+
 
   return (
     <>
@@ -95,7 +93,6 @@ const Cart = () => {
               <CheckoutSummary
                 cartItems={cartItems}
                 calculateSubtotal={calculateSubtotal}
-                handleCheckout={handleCheckout}
               />
             </div>
           </div>

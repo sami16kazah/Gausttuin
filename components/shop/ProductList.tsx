@@ -18,6 +18,7 @@ interface ProductListProps {
 export const ProductList: FC<ProductListProps> = ({ items }) => {
   const renderedItems = items.map((item) => (
     <ProductCard
+      id={item.id}
       key={item.id}
       name={item.name}
       price={item.price}
@@ -28,5 +29,5 @@ export const ProductList: FC<ProductListProps> = ({ items }) => {
     />
   ));
 
-  return {renderedItems};
+  return <div>{ renderedItems }</div>;
 };

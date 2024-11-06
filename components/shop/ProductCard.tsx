@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
+  id:number;
   name: string;
   price: number;
   photo: string;
@@ -37,6 +38,7 @@ const isDateInCurrentWeek = (dateString: string): boolean => {
 };
 
 export const ProductCard: React.FC<ProductCardProps> = ({
+  id,
   name,
   price,
   photo,
@@ -61,7 +63,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     const productExists = cart.find((item: any) => item.name === name);
 
     if (!productExists) {
-      cart.push({ name, price, photo, description, date, discount });
+      cart.push({ id,name, price, photo, description, date, discount });
       localStorage.setItem("cart", JSON.stringify(cart));
       setInCart(true);
     }

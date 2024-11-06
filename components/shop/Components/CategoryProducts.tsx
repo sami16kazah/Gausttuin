@@ -57,6 +57,7 @@ const CategoryProducts = async ({ id,name }: CategoryProductsProps) => {
     <Feature text={name}>
       {items.map((item: any) => (
         <ProductCard
+         id={item.id}
           key={item.id}
           name={item.name}
           price={item.price}
