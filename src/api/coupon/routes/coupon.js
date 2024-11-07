@@ -16,6 +16,6 @@ module.exports = createCoreRouter('api::coupon.coupon', {
           middlewares: [],
         },
       },
-    ],
+     ],
   },
 });

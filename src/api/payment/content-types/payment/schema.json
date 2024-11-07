@@ -4,7 +4,8 @@
   "info": {
     "singularName": "payment",
     "pluralName": "payments",
-    "displayName": "Payment"
+    "displayName": "Payment",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -25,9 +26,17 @@
     },
     "shop_items": {
       "type": "relation",
-      "relation": "oneToMany",   
+      "relation": "oneToMany",
       "target": "api::shop-item.shop-item",
-      "mappedBy": "payment" 
+      "mappedBy": "payment"
+    },
+    "invoice": {
+      "allowedTypes": [
+        "files"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
     }
   }
 }

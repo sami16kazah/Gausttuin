@@ -49,10 +49,9 @@
     },
     "payment": {
       "type": "relation",
-      "relation": "manyToOne",  
+      "relation": "manyToOne",
       "target": "api::payment.payment",
       "inversedBy": "shop_items"
     }
-
   }
 }

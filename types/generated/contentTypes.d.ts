@@ -976,6 +976,7 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
     singularName: 'payment';
     pluralName: 'payments';
     displayName: 'Payment';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -989,6 +990,7 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
       'oneToMany',
       'api::shop-item.shop-item'
     >;
+    invoice: Attribute.Media<'files'> & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
