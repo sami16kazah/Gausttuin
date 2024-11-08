@@ -1,24 +1,32 @@
+// @ts-ignore
 const { createMollieClient } = require("@mollie/api-client");
+// @ts-ignore
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
+// @ts-ignore
 const mime = require("mime-types");
+// @ts-ignore
 const _ = require("lodash");
+// @ts-ignore
 const { v4: uuidv4 } = require("uuid");
+const mollieClient = createMollieClient({
+  apiKey: "test_buU5ktQBSEgVK2v49n6KhWTArnwyFh",
+});
 
 module.exports = {
   async payment(ctx) {
+    // @ts-ignore
     const { cartItems, discount, couponCode } = ctx.request.body;
-    const mollieClient = createMollieClient({
-      apiKey: "test_buU5ktQBSEgVK2v49n6KhWTArnwyFh",
-    });
 
     try {
       // Get product data from database
       const productIds = cartItems.map((item) => item.id);
-      const products = await strapi.db.query("api::shop-item.shop-item").findMany({
-        filters: { id: { $in: productIds } },
-      });
+      const products = await strapi.db
+        .query("api::shop-item.shop-item")
+        .findMany({
+          filters: { id: { $in: productIds } },
+        });
 
       // Calculate subtotal based on cart items and product prices
       let subtotal = 0;
@@ -52,6 +60,7 @@ module.exports = {
         },
         description: "Order description here",
         redirectUrl: `${process.env.CLIENT_URL}/home?show=true&title=Thank you for your payment&message=Payment has been done successfully`,
+        webhookUrl: `${process.env.API_URL}/payment/validate`,
         method: ["ideal", "creditcard", "paypal", "applepay"],
       });
 
@@ -67,7 +76,12 @@ module.exports = {
 
       // Create a temporary file path for saving the invoice PDF
       const fileName = `invoice_${payment.id}.pdf`;
-      const tempFilePath = path.join(process.cwd(), "public", "uploads", fileName);
+      const tempFilePath = path.join(
+        process.cwd(),
+        "public",
+        "uploads",
+        fileName
+      );
 
       // Save the invoice PDF to the filesystem
       fs.writeFileSync(tempFilePath, invoiceBuffer);
@@ -80,11 +94,11 @@ module.exports = {
       const uploadedFile = await strapi.plugins.upload.services.upload.upload({
         data: {},
         files: {
-          path: tempFilePath,    // Path to the file
-          name: fileName,        // File name
-          type: mimeType,        // MIME type (should be 'application/pdf')
-          size: stats.size,      // Size of the file
-          resource_type: 'raw',
+          path: tempFilePath, // Path to the file
+          name: fileName, // File name
+          type: mimeType || "application/pdf", // MIME type (should be 'application/pdf')
+          size: stats.size, // Size of the file
+          resource_type: "raw",
         },
       });
 
@@ -114,27 +128,56 @@ module.exports = {
   },
 
   // Webhook handler for Mollie payment status updates
+  // Webhook handler for Mollie payment status updates
   async handlePaymentWebhook(ctx) {
     const { id, status } = ctx.request.body; // Get payment status and ID from Mollie webhook payload
 
-    if (status === "paid") {
-      // Payment is successful, update the payment status in the database
-      await strapi.entityService.update("api::payment.payment", id, {
-        data: {
-          status: "fulfilled", // Update payment status to "fulfilled"
-        },
-      });
+    // Check if 'id' is provided in the request
+    if (id) {
+      try {
+        // Get the payment details from Mollie
+        const payment = await mollieClient.payments.get(id);
 
-      // Respond with a success message
-      ctx.send({ message: "Payment status updated to fulfilled" });
+        // Find the payment record in Strapi by mollieId
+        const paymentRecord = await strapi.db
+          .query("api::payment.payment")
+          .findOne({
+            where: { mollieId: id }, // Search for the payment record using the mollieId
+          });
+
+        // Check if payment record was found in the database
+        if (paymentRecord) {
+          // Update the payment status in the Strapi database
+          await strapi.entityService.update(
+            "api::payment.payment", // The content type
+            paymentRecord.id, // The payment record ID
+            {
+              data: {
+                status: payment.status, // Update the status field based on Mollie's status
+              },
+            }
+          );
+
+          // Respond to indicate the payment status was successfully updated
+          ctx.send({ message: `Payment status updated to ${payment.status}` });
+        } else {
+          // Respond if no payment record was found for the provided mollieId
+          ctx.send({ message: `Payment record with mollieId ${id} not found` });
+        }
+      } catch (error) {
+        // Handle any errors that occur while processing the payment
+        console.error("Error processing payment webhook:", error);
+        ctx.send({
+          message: "An error occurred while processing the payment status",
+        });
+      }
     } else {
-      // Handle other statuses (e.g., failed, pending, etc.)
-      ctx.send({ message: `Payment status is not fulfilled: ${status}` });
+      // Respond if no 'id' was provided in the webhook payload
+      ctx.send({ message: "No payment ID provided in the webhook payload" });
     }
   },
 };
 
-// Function to generate the PDF buffer in memory
 function generatePdfBuffer(data) {
   return new Promise((resolve, reject) => {
     try {
@@ -160,17 +203,36 @@ function generatePdfBuffer(data) {
 
       // Add cart items to the invoice
       doc.fontSize(14).text("Cart Items:", { align: "left" });
-      data.cart.forEach((item) => {
-        const totalItemPrice = (parseFloat(item.price) * item.quantity).toFixed(2); // Price * Quantity
-        doc.text(`${item.name} x ${item.quantity} = ${totalItemPrice} EUR`, { align: "left" });
+      doc.moveDown();
+      data.cart.forEach((item, index) => {
+        // Validate and calculate item price
+        const price = parseFloat(item.price);
+        const quantity = parseFloat(item.quantity);
+        if (isNaN(price)) {
+          console.error(`Invalid price for item at index ${index}:`, item);
+          doc.text(`Error: Invalid price for ${item.name}`, {
+            align: "left",
+            color: "red",
+          });
+        } else {
+          const totalItemPrice = (price * quantity).toFixed(2);
+          doc.text(`${item.name} x ${item.quantity} = ${totalItemPrice} EUR`, {
+            align: "left",
+          });
+          doc.moveDown();
+        }
       });
       doc.moveDown();
 
       // Add subtotal and total amount
-      doc.fontSize(14).text(`Subtotal: ${data.amount.toFixed(2)} EUR`, { align: "right" });
+      doc
+        .fontSize(14)
+        .text(`Subtotal: ${data.amount.toFixed(2)} EUR`, { align: "right" });
 
       if (data.discount) {
-        doc.text(`Discount: ${data.discount.toFixed(2)} EUR`, { align: "right" });
+        doc.text(`Discount: ${data.discount.toFixed(2)} EUR`, {
+          align: "right",
+        });
       }
 
       doc.text(`Total: ${data.amount.toFixed(2)} EUR`, { align: "right" });

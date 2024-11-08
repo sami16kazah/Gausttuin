@@ -10,6 +10,14 @@ module.exports = {
             auth:false,
         }
       },
+      {
+        method: 'POST',
+        path: '/payment/validate',
+        handler: 'payment.handlePaymentWebhook',
+        config:{
+            auth:false,
+        }
+      },
     ],
   };
   
