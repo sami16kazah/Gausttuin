@@ -17,7 +17,8 @@ const mollieClient = createMollieClient({
 module.exports = {
   async payment(ctx) {
     // @ts-ignore
-    const { cartItems, discount, couponCode } = ctx.request.body;
+    const { cartItems, discount, couponCode, phone, email, location } =
+      ctx.request.body;
 
     try {
       // Get product data from database
@@ -43,8 +44,16 @@ module.exports = {
 
       // Apply discount if provided
       let discount_ = 0;
-      if (discount) {
+      let coupon = { code: 0 };
+
+      if (discount && coupon) {
         discount_ = parseFloat(discount);
+        coupon = await strapi.db.query("api::coupon.coupon").findOne({
+          where: { code: couponCode },
+        });
+        if (coupon.max_usag <= 0) {
+          coupon = { code: 0 };
+        }
       }
       if (discount_ > subtotal) {
         discount_ = subtotal; // Discount can't be greater than the subtotal
@@ -59,7 +68,7 @@ module.exports = {
           value: totalAmount.toFixed(2), // Round to two decimal places
         },
         description: "Order description here",
-        redirectUrl: `${process.env.CLIENT_URL}/home?show=true&title=Thank you for your payment&message=Payment has been done successfully`,
+        redirectUrl: `${process.env.CLIENT_URL}/home?show=true&title=Thank you for your payment&message=Payment has been done successfully we had sent an invoice to your email `,
         webhookUrl: `${process.env.API_URL}/payment/validate`,
         method: ["ideal", "creditcard", "paypal", "applepay"],
       });
@@ -67,7 +76,12 @@ module.exports = {
       const data = {
         orderId: payment.id,
         cart: cartItems,
+        subtotal: subtotal,
         amount: totalAmount,
+        email: email,
+        address: location,
+        phone: phone,
+        coupon: coupon.code,
         discount: discount_,
       };
 
@@ -110,6 +124,9 @@ module.exports = {
           status: "pending",
           shop_items: cartItems.map((item) => ({ id: item.id })), // Save cart item IDs
           invoice: uploadedFile[0].id, // Save the uploaded file ID
+          email: email,
+          phone: phone,
+          address: location,
         },
       });
 
@@ -131,7 +148,8 @@ module.exports = {
   // Webhook handler for Mollie payment status updates
   async handlePaymentWebhook(ctx) {
     const { id, status } = ctx.request.body; // Get payment status and ID from Mollie webhook payload
-
+    console.log(ctx.request.body);
+    console.log("hello there failed ");
     // Check if 'id' is provided in the request
     if (id) {
       try {
@@ -143,6 +161,7 @@ module.exports = {
           .query("api::payment.payment")
           .findOne({
             where: { mollieId: id }, // Search for the payment record using the mollieId
+            populate: { invoice: true },
           });
 
         // Check if payment record was found in the database
@@ -157,7 +176,20 @@ module.exports = {
               },
             }
           );
-
+          if (payment.status === "paid") {
+            try {
+              await strapi.plugins["email"].services.email.send({
+                to: paymentRecord.email, // You can pass this from the frontend
+                from: process.env.EMAIL,
+                subject: "Invoice",
+                text: `Thank you for buying from de gastuin your invoice in the link below !`,
+                html: `<p>Thank you for buying from de gastuin your invoice in the link below ! </p><br> <a href=${paymentRecord.invoice.url} >Your Invoice link </a>`,
+              });
+              ctx.send({ message: "Email sent successfully!" });
+            } catch (err) {
+              ctx.send({ message: "Failed to send email", error: err });
+            }
+          }
           // Respond to indicate the payment status was successfully updated
           ctx.send({ message: `Payment status updated to ${payment.status}` });
         } else {
@@ -224,10 +256,31 @@ function generatePdfBuffer(data) {
       });
       doc.moveDown();
 
+      doc.text(`Customer Email : ${data.email} `, {
+        align: "left",
+      });
+      doc.moveDown();
+
+      doc.text(`Customer Phone : ${data.phone} `, {
+        align: "left",
+      });
+      doc.moveDown();
+
+      doc.text(`Delivery Address : ${data.address} `, {
+        align: "left",
+      });
+      doc.moveDown();
+      if (data.coupon !== 0) {
+        doc.text(`Coupon Applied code : ${data.coupon} `, {
+          align: "left",
+        });
+      }
+      doc.moveDown();
+
       // Add subtotal and total amount
       doc
         .fontSize(14)
-        .text(`Subtotal: ${data.amount.toFixed(2)} EUR`, { align: "right" });
+        .text(`Subtotal: ${data.subtotal.toFixed(2)} EUR`, { align: "right" });
 
       if (data.discount) {
         doc.text(`Discount: ${data.discount.toFixed(2)} EUR`, {

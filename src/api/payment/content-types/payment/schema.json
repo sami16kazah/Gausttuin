@@ -31,11 +31,23 @@
       "mappedBy": "payment"
     },
     "invoice": {
-      "allowedTypes": [
-        "files"
-      ],
       "type": "media",
       "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "address": {
+      "type": "text",
+      "required": true
+    },
+    "phone": {
+      "type": "integer",
       "required": true
     }
   }

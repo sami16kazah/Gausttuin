@@ -6,7 +6,6 @@ const { createCoreController } = require('@strapi/strapi').factories;
 module.exports = createCoreController('api::coupon.coupon', ({ strapi }) => ({
   async validateCoupon(ctx) {
     const { code } = ctx.request.body; // Get the coupon code from the request body
-
     try {
       const coupon = await strapi.db.query('api::coupon.coupon').findOne({
         where: { code },
@@ -25,7 +24,7 @@ module.exports = createCoreController('api::coupon.coupon', ({ strapi }) => ({
         discount: coupon.discount, // Send the discount value
       });
     } catch (err) {
-      return ctx.throw(500, 'Internal server error');
+      return ctx.throw(500, 'Invalid Coupon ');
     }
   },
 }));
