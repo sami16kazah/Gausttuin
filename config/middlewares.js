@@ -6,7 +6,7 @@ module.exports = [
     name: "strapi::cors",
     config: {
       enabled: true,
-      origin: ["http://localhost:3000","http://localhost:1337"], // Only allow requests from Next.js frontend
+      origin: ["http://localhost:3000","http://localhost:1337","https://gastuin.onrender.com"], // Only allow requests from Next.js frontend
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // Restrict allowed methods if needed
       headers: ["Content-Type", "Authorization"], // Allow only specific headers if needed
     },
