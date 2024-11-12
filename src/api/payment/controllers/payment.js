@@ -11,7 +11,7 @@ const _ = require("lodash");
 // @ts-ignore
 const { v4: uuidv4 } = require("uuid");
 const mollieClient = createMollieClient({
-  apiKey: "test_buU5ktQBSEgVK2v49n6KhWTArnwyFh",
+  apiKey: process.env.MOLLIE_API_KEY,
 });
 
 module.exports = {
@@ -69,7 +69,7 @@ module.exports = {
         },
         description: "Order description here",
         redirectUrl: `${process.env.CLIENT_URL}/home?show=true&title=Thank you for your payment&message=Payment has been done successfully we had sent an invoice to your email `,
-        webhookUrl: `${process.env.API_URL}/payment/validate`,
+        webhookUrl: `${process.env.API_URL}/api/payment/validate`,
         method: ["ideal", "creditcard", "paypal", "applepay"],
       });
 
@@ -149,7 +149,7 @@ module.exports = {
   async handlePaymentWebhook(ctx) {
     const { id, status } = ctx.request.body; // Get payment status and ID from Mollie webhook payload
     console.log(ctx.request.body);
-    console.log("hello there failed ");
+    console.log("hello there ");
     // Check if 'id' is provided in the request
     if (id) {
       try {
