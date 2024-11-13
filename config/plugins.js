@@ -4,7 +4,7 @@ module.exports = ({ env }) => ({
         provider: 'nodemailer',
         providerOptions: {
           host: 'in-v3.mailjet.com', // Mailjet SMTP host
-          port: 25, // SMTP port for Mailjet
+          port: 587, // SMTP port for Mailjet
           secure:false,
           auth: {
             user: env('MAILJET_API_KEY'), // Mailjet API Key
