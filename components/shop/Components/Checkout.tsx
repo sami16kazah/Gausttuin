@@ -205,7 +205,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
       </div>
 
       <div className="mt-4">
-        <label className="block font-semibold mb-1 flex">Location:</label>
+        <label className="block font-semibold mb-1 ">Location:</label>
         <div className="flex items-center">
           <input
             type="text"

@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
 
     try {
       // Verify and decode the token using jose
-      const { payload } = await jwtVerify(AuthToken.value, JWT_SECRET);
+      await jwtVerify(AuthToken.value, JWT_SECRET);
       const user = JSON.parse(UserToken.value);
       const response = NextResponse.next();
       response.headers.set("X-Is-Logged-In", "true");
@@ -40,9 +40,7 @@ export async function middleware(request: NextRequest) {
       console.error("Token verification failed:", error);
       return NextResponse.redirect(new URL("/auth/signin", request.url));
     }
-  }
-
-  else if (
+  } else if (
     checkedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
   ) {
     // Check if the cookie exists
@@ -50,11 +48,11 @@ export async function middleware(request: NextRequest) {
     const UserToken = request.cookies.get("user");
     if (!AuthToken || !UserToken) {
       // Redirect to the login page if the token is not present
-      return ;
+      return;
     }
     try {
       // Verify and decode the token using jose
-      const { payload } = await jwtVerify(AuthToken.value, JWT_SECRET);
+      await jwtVerify(AuthToken.value, JWT_SECRET);
       const user = JSON.parse(UserToken.value);
       const response = NextResponse.next();
       response.headers.set("X-Is-Logged-In", "true");
@@ -64,15 +62,12 @@ export async function middleware(request: NextRequest) {
     } catch (error) {
       // If token verification fails, redirect to login
       console.error("Token verification failed:", error);
-      return ;
+      return;
     }
-
-  }
-
-  else{
+  } else {
     const UserToken = request.cookies.get("user");
     const response = NextResponse.next();
-    if(!UserToken){
+    if (!UserToken) {
       return response;
     }
     const user = JSON.parse(UserToken.value);
