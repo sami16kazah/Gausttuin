@@ -5,7 +5,6 @@ module.exports = ({ env }) => ({
         providerOptions: {
           host: 'in-v3.mailjet.com', // Mailjet SMTP host
           port: 465, // SMTP port for Mailjet
-          secure:true,
           auth: {
             user: env('MAILJET_API_KEY'), // Mailjet API Key
             pass: env('MAILJET_SECRET_KEY'), // Mailjet Secret Key
