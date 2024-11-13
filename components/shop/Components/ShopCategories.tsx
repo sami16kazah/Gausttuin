@@ -9,7 +9,6 @@ async function fetchShopCategories() {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/categories?populate=photo`,
-      { cache: "no-store" }
     );
 
     if (!response.ok) {

@@ -7,7 +7,6 @@ async function fetchShopItems(id: string) {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/shop-items?populate=Photo&filters[category][id][$eq]=${id}`,
-      { cache: "no-store" } // No caching for fresh data
     );
 
     if (!response.ok) {
