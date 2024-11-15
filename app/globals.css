@@ -54,7 +54,7 @@ input:-webkit-autofill:focus {
 }
 
 .swiper-pagination {
-  --swiper-pagination-color: #FF914D;
+  --swiper-pagination-color: #FF914D !important;
 }
 
 /* Override the default Swiper pagination bullet colors */
@@ -64,5 +64,5 @@ input:-webkit-autofill:focus {
 
 .swiper-pagination-bullet-active {
   background-color: #FF914D !important ; /* Active bullet color */
-  opacity: 1; /* Ensures active bullet is fully opaque */
+  opacity: 1 !important; /* Ensures active bullet is fully opaque */
 }
