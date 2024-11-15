@@ -1,22 +1,15 @@
 module.exports = ({ env }) => ({
-    email: {
-      config: {
-        provider: 'nodemailer',
-        providerOptions: {
-          host: 'in-v3.mailjet.com', // Mailjet SMTP host
-          port: 25, // SMTP port for Mailjet
-          secure:false,
-          auth: {
-            user: env('MAILJET_API_KEY'), // Mailjet API Key
-            pass: env('MAILJET_SECRET_KEY'), // Mailjet Secret Key
-          },
-        },
-        settings: {
-          defaultFrom: env('MAILJET_SENDER_EMAIL'), // Your sender email address
-          defaultReplyTo: env('MAILJET_SENDER_EMAIL'), // Default reply-to email
-        },
-      },
+  email: {
+    provider: 'mailjet',
+    providerOptions: {
+      publicApiKey: env('MAILJET_PUBLIC_KEY'),
+      secretApiKey: env('MAILJET_SECRET_KEY'),
     },
+    settings: {
+      defaultFrom:  env('MAILJET_SENDER_EMAIL'),
+      defaultReplyTo: env('MAILJET_SENDER_EMAIL'),
+    },
+  },
     upload: {
       config: {
         provider: 'cloudinary',
