@@ -1,5 +1,5 @@
-"use client";
-import React, { ReactNode, useRef } from "react";
+"use client"
+import React, { ReactNode, useRef, useEffect, useState } from "react";
 import WineStain from "../../public/images/wine-stain.png";
 import Image from "next/image";
 import HrImage from "../../public/images/hr.png";
@@ -16,9 +16,16 @@ interface FeatureProps {
 }
 
 export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
+  const [swiperInitialized, setSwiperInitialized] = useState(false);
+
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
   const paginationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Mark swiper as initialized after mount
+    setSwiperInitialized(true);
+  }, []);
 
   return (
     <div className="flex flex-grow flex-col justify-start bg-white rounded-lg shadow-lg p-6 m-0">
@@ -47,54 +54,41 @@ export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
       </div>
 
       <div className="flex items-center justify-center w-full max-w-[80%] mx-auto">
-        <Swiper
-          modules={[Navigation, Pagination]}
-          spaceBetween={1}
-          slidesPerView={3}
-          navigation={{
-            prevEl: prevRef.current,
-            nextEl: nextRef.current,
-          }}
-          pagination={{
-            el: paginationRef.current,
-            clickable: true,
-          }}
-          onBeforeInit={(swiper) => {
-            const navigation = swiper.params.navigation as {
-              prevEl?: HTMLElement | null;
-              nextEl?: HTMLElement | null;
-            };
-            navigation.prevEl = prevRef.current;
-            navigation.nextEl = nextRef.current;
-
-            const pagination = swiper.params.pagination as {
-              el?: HTMLElement | null;
-            };
-            pagination.el = paginationRef.current;
-
-            swiper.navigation.update();
-            swiper.pagination.update();
-          }}
-          breakpoints={{
-            124: { slidesPerView: 1 },
-            280: { slidesPerView: 1 },
-            320: { slidesPerView: 1 },
-            480: { slidesPerView: 1 },
-            640: { slidesPerView: 1.5 },
-            768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-          }}
-          className="flex items-center justify-center  max-w-[80%] w-full mx-auto "
-        >
-          {children.map((child, index) => (
-            <SwiperSlide
-              key={index}
-              className="flex items-center justify-center text-center space-x-2"
-            >
-              {child}
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        {/* Only render Swiper after it's initialized */}
+        {swiperInitialized && (
+          <Swiper
+            modules={[Navigation, Pagination]}
+            spaceBetween={1}
+            slidesPerView={3}
+            navigation={{
+              prevEl: prevRef.current,
+              nextEl: nextRef.current,
+            }}
+            pagination={{
+              el: paginationRef.current,
+              clickable: true,
+            }}
+            breakpoints={{
+              124: { slidesPerView: 1 },
+              280: { slidesPerView: 1 },
+              320: { slidesPerView: 1 },
+              480: { slidesPerView: 1 },
+              640: { slidesPerView: 1.5 },
+              768: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+            className="flex items-center justify-center  max-w-[80%] w-full mx-auto"
+          >
+            {children.map((child, index) => (
+              <SwiperSlide
+                key={index}
+                className="flex items-center justify-center text-center space-x-2"
+              >
+                {child}
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
       </div>
 
       <div className="flex items-center justify-center mt-4 ">
