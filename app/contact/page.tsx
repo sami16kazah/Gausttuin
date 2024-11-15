@@ -16,7 +16,6 @@ async function fetchQuestionsByLocation(location: string) {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/qa-sections?filters[location][$eq]=${location}`,
-      { cache: "no-store" }
     );
 
     if (!response.ok) {

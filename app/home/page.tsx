@@ -8,7 +8,7 @@ import Modal from "@/components/Modal";
 
 export default function Page() {
   const [showModel,setShowModel]=useState<boolean>(false);
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
   const show= searchParams.get('show');
   const title = searchParams.get('title');
   const description = searchParams.get('message');
