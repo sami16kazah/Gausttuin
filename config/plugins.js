@@ -8,9 +8,10 @@ module.exports = ({ env }) => ({
       },
       settings: {
         defaultFrom: env("MAILJET_SENDER_EMAIL"),
-        defaultFromName: env("MAILJET_SENDER_EMAIL"),
+        defaultFromName: env("De Gastuin"),
         defaultTo: env("MAILJET_SENDER_EMAIL"),
         defaultToName: env("MAILJET_SENDER_EMAIL"),
+        defaultReplyTo: env("MAILJET_SENDER_EMAIL"),
       },
     },
   },
