@@ -5,7 +5,6 @@ import axios from "axios";
 
 export async function POST(req: Request) {
   const { username, email, password, phone } = await req.json();
-
   if (!username || !email || !password || !phone) {
     return NextResponse.json(
       { message: "All fields are required" },

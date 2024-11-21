@@ -5,7 +5,7 @@ import axios from "axios";
 
 export async function POST(req: Request) {
   const { email, password, rememberMe } = await req.json();
-
+  const LowerCaseEmail = email.toLowerCase();
   if (!email || !password) {
     return NextResponse.json(
       { message: "All fields are required" },
@@ -14,10 +14,11 @@ export async function POST(req: Request) {
   }
 
   try {
+
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/local`,
       {
-        identifier: email,
+        identifier: LowerCaseEmail,
         password,
       }
     );
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
 
     // Fetch user information from Strapi based on email
     const userInfoResponse = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/users?filters[$and][0][email][$eq]=${email}`
+      `${process.env.NEXT_PUBLIC_API_URL}/users?filters[$and][0][email][$eq]=${LowerCaseEmail}`
     );
 
     // Ensure userInfo is extracted properly
