@@ -993,7 +993,7 @@ export interface ApiPaymentPayment extends Schema.CollectionType {
     invoice: Attribute.Media<'files'> & Attribute.Required;
     email: Attribute.Email & Attribute.Required;
     address: Attribute.Text & Attribute.Required;
-    phone: Attribute.Integer & Attribute.Required;
+    phone: Attribute.BigInteger & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

@@ -47,7 +47,7 @@
       "required": true
     },
     "phone": {
-      "type": "integer",
+      "type": "biginteger",
       "required": true
     }
   }
