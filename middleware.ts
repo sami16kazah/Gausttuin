@@ -9,7 +9,7 @@ const JWT_SECRET = new TextEncoder().encode(
 );
 
 // Define which paths should be protected
-const protectedPaths = ["/shop"]; // Add any routes that need protection
+const protectedPaths = ["/none"]; // Add any routes that need protection
 
 const checkedPaths = ["/auth"];
 

@@ -1,13 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use server"; // Server directive for Next.js
+"use client";
 import { Feature } from "@/components/shop/Feature";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { useEffect, useState } from "react";
 
 async function fetchShopItems(id: string) {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/shop-items?populate=Photo&filters[category][id][$eq]=${id}`,
-    );
+    const response = await fetch("/api/shop/categories/products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+      cache: "no-cache",
+    });
 
     if (!response.ok) {
       throw new Error(`Error fetching data: ${response.statusText}`);
@@ -16,24 +22,7 @@ async function fetchShopItems(id: string) {
     const data = await response.json();
 
     // Return the transformed data
-    return data.data.map((item: any) => {
-      const photoData = item.attributes.Photo?.data;
-      const photoUrl =
-        photoData && photoData.length > 0
-          ? photoData[0].attributes.formats?.thumbnail?.url ||
-            photoData[0].attributes.url
-          : null;
-
-      return {
-        id: item.id,
-        name: item.attributes.Name,
-        price: item.attributes.Price,
-        description: item.attributes.Description,
-        photo: photoUrl || "default-photo-url", // Fallback URL
-        date: item.attributes.Date,
-        discount: item.attributes.Discount,
-      };
-    });
+    return data;
   } catch (error) {
     console.error("Failed to fetch shop items:", error);
     return [];
@@ -42,21 +31,48 @@ async function fetchShopItems(id: string) {
 
 interface CategoryProductsProps {
   id: string;
-  name:string;
+  name: string;
 }
 
-const CategoryProducts = async ({ id,name }: CategoryProductsProps) => {
-  if (!id) {
-    return <p>No category ID provided.</p>; // Provide feedback if no ID is found
+const CategoryProducts = ({ id, name }: CategoryProductsProps) => {
+  const [items, setItems] = useState<any[]>([]); // State to store products
+  const [loading, setLoading] = useState<boolean>(true); // State to track loading
+  const [error, setError] = useState<string | null>(null); // State to handle errors
+
+  useEffect(() => {
+    if (!id) {
+      setError("No category ID provided.");
+      setLoading(false);
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const items = await fetchShopItems(id);
+        setItems(items);
+      } catch (error: any) {
+        setError(error.message || "Failed to fetch products.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]); // Fetch data when `id` changes
+
+  if (loading) {
+    return <p>Loading products...</p>;
   }
 
-  const items = await fetchShopItems(id);
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return items.length > 0 ? (
     <Feature text={name}>
-      {items.map((item: any) => (
+      {items.map((item) => (
         <ProductCard
-         id={item.id}
+          id={item.id}
           key={item.id}
           name={item.name}
           price={item.price}

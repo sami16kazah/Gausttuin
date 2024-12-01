@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { FaCartPlus } from "react-icons/fa";
 
 interface ProductCardProps {
-  id:number;
+  id: number;
   name: string;
   price: number;
   photo: string;
@@ -63,7 +64,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     const productExists = cart.find((item: any) => item.name === name);
 
     if (!productExists) {
-      cart.push({ id,name, price, photo, description, date, discount });
+      cart.push({ id, name, price, photo, description, date, discount });
       localStorage.setItem("cart", JSON.stringify(cart));
       setInCart(true);
     }
@@ -123,7 +124,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               backgroundColor: "#fff",
             }}
           >
-            Add to Cart
+            <div className="flex justify-between items-center gap-2">
+              <FaCartPlus></FaCartPlus>
+              <p>Add to Cart</p>
+            </div>
           </button>
         ) : (
           <>

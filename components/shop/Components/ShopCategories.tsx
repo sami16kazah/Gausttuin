@@ -1,15 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // components/shop/ShopProducts.tsx
-"use server";
+"use client";
+
 import { Feature } from "@/components/shop/Feature";
 import { CategoryCard } from "../CategoryCard";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 async function fetchShopCategories() {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/categories?populate=photo`,
-    );
+    const response = await fetch("/api/shop/categories", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-cache", // Ensure no cached response
+    });
 
     if (!response.ok) {
       throw new Error(`Error fetching data: ${response.statusText}`);
@@ -17,41 +23,53 @@ async function fetchShopCategories() {
 
     const data = await response.json();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return data.data.map((item: any) => {
-      // Safely access photo URL
-      const photoData = item.attributes.photo?.data;
-      const photoUrl =
-        photoData && photoData.length > 0
-          ? photoData[0].attributes.formats?.thumbnail?.url ||
-            photoData[0].attributes.url
-          : null;
-
-      return {
-        id: item.id,
-        name: item.attributes.name,
-        photo: photoUrl, // Full URL for the photo
-      };
-    });
+    // Return the transformed data
+    return data;
   } catch (error) {
-    console.error("Failed to fetch shop items:", error);
+    console.error("Failed to fetch shop categories:", error);
     return [];
   }
 }
 
-const ShopCategories = async () => {
-  const items = await fetchShopCategories();
-  return items.length > 0 ? (
+const ShopCategories = () => {
+  const [categories, setCategories] = useState<any[]>([]); // State for categories
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [error, setError] = useState<string | null>(null); // Error state
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchShopCategories();
+        setCategories(data);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch categories.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures fetch happens once on mount
+
+  if (loading) {
+    return <p>Loading categories...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  return categories.length > 0 ? (
     <Feature text="Categories">
-      {items.map((item: any) => (
+      {categories.map((category: any) => (
         <Link
-          key={item.id}
-          href={`/shop/category?id=${item.id}&name=${item.name}`}
+          key={category.id}
+          href={`/shop/category?id=${category.id}&name=${category.name}`}
         >
           <CategoryCard
-            key={item.id}
-            name={item.name}
-            photo={item.photo} // Fallback for missing photos
+            key={category.id}
+            name={category.name}
+            photo={category.photo || "default-category-photo"} // Fallback for missing photos
           />
         </Link>
       ))}

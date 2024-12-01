@@ -1,58 +1,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // components/shop/ShopProducts.tsx
-"use server"
+"use client";
+
+import { useEffect, useState } from "react";
 import { Feature } from "@/components/shop/Feature";
 import { ProductCard } from "@/components/shop/ProductCard";
+
 async function fetchShopItems() {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/shop-items?populate=Photo`,
-      );
-  
-      if (!response.ok) {
-        throw new Error(`Error fetching data: ${response.statusText}`);
-      }
-  
-      const data = await response.json();
-  
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return data.data.map((item: any) => {
-        // Safely access photo URL
-        const photoData = item.attributes.Photo?.data;
-        const photoUrl =
-          photoData && photoData.length > 0
-            ? photoData[0].attributes.formats?.thumbnail?.url ||
-              photoData[0].attributes.url
-            : null;
-  
-        return {
-          id: item.id,
-          name: item.attributes.Name,
-          price: item.attributes.Price,
-          description: item.attributes.Description,
-          photo: photoUrl, // Full URL for the photo
-          date: item.attributes.Date,
-          discount: item.attributes.Discount,
-        };
-      });
-    } catch (error) {
-      console.error("Failed to fetch shop items:", error);
-      return [];
+  try {
+    const response = await fetch(`api/shop/products`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: "no-cache", // Ensure no cached response
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching data: ${response.statusText}`);
     }
+
+    const data = await response.json();
+
+    // Transform the data
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch shop items:", error);
+    return [];
+  }
+}
+
+const ShopProducts = () => {
+  const [products, setProducts] = useState<any[]>([]); // State to store products
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [error, setError] = useState<string | null>(null); // Error state
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const items = await fetchShopItems();
+        setProducts(items);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch products.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures this runs once on mount
+
+  if (loading) {
+    return <p>Loading products...</p>;
   }
 
-const  ShopProducts = async () => {
-    const items = await fetchShopItems();
-  return items.length > 0 ? (
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  return products.length > 0 ? (
     <Feature text="Products">
-      {items.map((item:any) => (
+      {products.map((item: any) => (
         <ProductCard
-         id={item.id}
+          id={item.id}
           key={item.id}
           name={item.name}
           price={item.price}
           description={item.description}
-          photo={item.photo || "default-photo-url"} // Fallback for missing photos
+          photo={item.photo} // Fallback already handled in fetch logic
           date={item.date}
           discount={item.discount}
         />
