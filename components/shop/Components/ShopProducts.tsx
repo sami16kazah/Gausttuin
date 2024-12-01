@@ -8,7 +8,7 @@ import { ProductCard } from "@/components/shop/ProductCard";
 
 async function fetchShopItems() {
   try {
-    const response = await fetch(`api/shop/products`, {
+    const response = await fetch(`/api/shop/products`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

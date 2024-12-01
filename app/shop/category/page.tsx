@@ -41,7 +41,7 @@ export default async function Page({
             image={CategorySectionImage.src}
             button="Explore more"
           ></BackGroundSection>
-          <ShopProducts />
+         <ShopProducts></ShopProducts>
         </main>
         <LazyComponent />
       </div>
