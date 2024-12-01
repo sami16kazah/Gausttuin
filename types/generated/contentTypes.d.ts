@@ -832,6 +832,59 @@ export interface PluginStrapiGoogleAuthGoogleCredential
   };
 }
 
+export interface PluginStrapiLeafletGeomanConfig extends Schema.SingleType {
+  collectionName: 'strapi_leaflet_geoman_config';
+  info: {
+    singularName: 'config';
+    pluralName: 'configs';
+    displayName: 'Strapi Leaflet Geoman Config';
+  };
+  options: {
+    populateCreatorFields: false;
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+  };
+  attributes: {
+    defaultLatitude: Attribute.Decimal &
+      Attribute.Required &
+      Attribute.DefaultTo<42>;
+    defaultLongitude: Attribute.Decimal &
+      Attribute.Required &
+      Attribute.DefaultTo<42>;
+    defaultZoom: Attribute.Integer &
+      Attribute.Required &
+      Attribute.DefaultTo<6>;
+    defaultTileURL: Attribute.String &
+      Attribute.Required &
+      Attribute.DefaultTo<'https://tile.openstreetmap.org/{z}/{x}/{y}.png'>;
+    defaultTileAttribution: Attribute.String &
+      Attribute.Required &
+      Attribute.DefaultTo<"Map data \u00A9 <a href='https://www.openstreetmap.org'>OpenStreetMap</a> contributors">;
+    defaultTileAccessToken: Attribute.String & Attribute.DefaultTo<''>;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'plugin::strapi-leaflet-geoman.config',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'plugin::strapi-leaflet-geoman.config',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Schema.CollectionType {
   collectionName: 'categories';
   info: {
@@ -1092,6 +1145,44 @@ export interface ApiShopItemShopItem extends Schema.CollectionType {
   };
 }
 
+export interface ApiTicketTicket extends Schema.CollectionType {
+  collectionName: 'tickets';
+  info: {
+    singularName: 'ticket';
+    pluralName: 'tickets';
+    displayName: 'Ticket';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    name: Attribute.String & Attribute.Required;
+    date: Attribute.DateTime & Attribute.Required;
+    price: Attribute.Float & Attribute.Required;
+    guidlines: Attribute.Blocks & Attribute.Required;
+    location: Attribute.JSON &
+      Attribute.Required &
+      Attribute.CustomField<'plugin::strapi-leaflet-geoman.geojson'>;
+    description: Attribute.Blocks & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::ticket.ticket',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::ticket.ticket',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 declare module '@strapi/types' {
   export module Shared {
     export interface ContentTypes {
@@ -1111,6 +1202,7 @@ declare module '@strapi/types' {
       'plugin::users-permissions.role': PluginUsersPermissionsRole;
       'plugin::users-permissions.user': PluginUsersPermissionsUser;
       'plugin::strapi-google-auth.google-credential': PluginStrapiGoogleAuthGoogleCredential;
+      'plugin::strapi-leaflet-geoman.config': PluginStrapiLeafletGeomanConfig;
       'api::category.category': ApiCategoryCategory;
       'api::contact.contact': ApiContactContact;
       'api::coupon.coupon': ApiCouponCoupon;
@@ -1118,6 +1210,7 @@ declare module '@strapi/types' {
       'api::payment.payment': ApiPaymentPayment;
       'api::qa-section.qa-section': ApiQaSectionQaSection;
       'api::shop-item.shop-item': ApiShopItemShopItem;
+      'api::ticket.ticket': ApiTicketTicket;
     }
   }
 }

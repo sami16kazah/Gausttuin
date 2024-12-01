@@ -15,6 +15,9 @@ module.exports = ({ env }) => ({
       },
     },
   },
+  "map-field": {
+    enabled: true,
+  },
   upload: {
     config: {
       provider: "cloudinary",
