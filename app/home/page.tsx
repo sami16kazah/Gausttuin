@@ -2,16 +2,19 @@
 
 import Footer from "@/components/pages/Footer/Footer";
 import Navbar from "@/components/pages/Navbar";
-import { useEffect ,useState} from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Modal from "@/components/Modal";
+import Breif from "../../public/images/what-we-have.png";
+import Image from "next/image";
+import QA from "@/components/QA";
 
-export default function Page() {
-  const [showModel,setShowModel]=useState<boolean>(false);
+export default function Home() {
+  const [showModel, setShowModel] = useState<boolean>(false);
   const searchParams = useSearchParams();
-  const show= searchParams.get('show');
-  const title = searchParams.get('title');
-  const description = searchParams.get('message');
+  const show = searchParams.get("show");
+  const title = searchParams.get("title");
+  const description = searchParams.get("message");
 
   useEffect(() => {
     if (show !== null) {
@@ -21,7 +24,7 @@ export default function Page() {
 
   const handelClose = () => {
     setShowModel((prev) => !prev);
-    localStorage.removeItem('cart');
+    localStorage.removeItem("cart");
   };
 
   return (
@@ -37,7 +40,10 @@ export default function Page() {
       <Navbar />
 
       <div className="flex flex-col min-h-screen">
-        <main className="flex-grow">{/* Your main content goes here */}</main>
+        <main className="flex-grow">
+          <Image src={Breif} alt="breif"></Image>
+          <QA location="home"></QA>
+        </main>
         <Footer />
       </div>
     </>

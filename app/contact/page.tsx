@@ -1,8 +1,9 @@
 "use server"; // Server directive for Next.js
-import { Accordion } from "@/components/Accordion";
+
 import ContactCard from "@/components/pages/contact/ContactCard";
 import ContactForm from "@/components/pages/contact/ContactForm";
 import Navbar from "@/components/pages/Navbar";
+import QA from "@/components/QA";
 import dynamic from "next/dynamic";
 
 // Lazy load Footer component
@@ -11,37 +12,10 @@ const LazyComponent = dynamic(() => import("@/components/pages/Footer/Footer"), 
   ssr: false, // No server-side rendering
 });
 
-// Fetch questions by location
-async function fetchQuestionsByLocation(location: string) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/qa-sections?filters[location][$eq]=${location}`,
-    );
 
-    if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.statusText}`);
-    }
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
 
 // Page component
 export default async function Page() {
-  // Fetch data for the accordion
-  const locationValue = "contact"; // Location filter
-  const items = await fetchQuestionsByLocation(locationValue);
-
-  // Format fetched items for Accordion
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const formattedItems = items.map((item: any) => ({
-    id: item.id,
-    label: item.attributes.label,
-    content: item.attributes.content,
-  }));
 
   return (
     <>
@@ -93,26 +67,7 @@ export default async function Page() {
             </div>
           </div>
 
-          {/* Frequently Asked Questions */}
-          {formattedItems && formattedItems.length > 0 && (
-            <>
-              <div>
-                <p
-                  className="text-xl font-medium font-sans text-center mt-10 text-black"
-                  style={{
-                    fontStyle: "normal",
-                    fontWeight: "500",
-                    lineHeight: "1.5em",
-                    textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
-                    WebkitTextStroke: "0.5px white",
-                  }}
-                >
-                  Frequently Asked Questions
-                </p>
-              </div>
-              <Accordion items={formattedItems} />
-            </>
-          )}
+          <QA location="contact"></QA>
         </main>
         <LazyComponent />
       </div>
