@@ -992,6 +992,44 @@ export interface ApiCouponCoupon extends Schema.CollectionType {
   };
 }
 
+export interface ApiMainEventMainEvent extends Schema.CollectionType {
+  collectionName: 'main_events';
+  info: {
+    singularName: 'main-event';
+    pluralName: 'main-events';
+    displayName: 'Main Event';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    event: Attribute.Relation<
+      'api::main-event.main-event',
+      'oneToOne',
+      'api::ticket.ticket'
+    >;
+    title: Attribute.String & Attribute.Required;
+    description: Attribute.String & Attribute.Required;
+    button_name: Attribute.String & Attribute.Required;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::main-event.main-event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::main-event.main-event',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiNewsLetterNewsLetter extends Schema.CollectionType {
   collectionName: 'news_letters';
   info: {
@@ -1079,7 +1117,7 @@ export interface ApiQaSectionQaSection extends Schema.CollectionType {
   attributes: {
     label: Attribute.String & Attribute.Required;
     content: Attribute.String & Attribute.Required;
-    location: Attribute.Enumeration<['contact', 'book', 'support']>;
+    location: Attribute.Enumeration<['contact', 'book', 'home', 'support']>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1150,7 +1188,7 @@ export interface ApiTicketTicket extends Schema.CollectionType {
   info: {
     singularName: 'ticket';
     pluralName: 'tickets';
-    displayName: 'Ticket';
+    displayName: 'Event';
     description: '';
   };
   options: {
@@ -1165,6 +1203,9 @@ export interface ApiTicketTicket extends Schema.CollectionType {
       Attribute.Required &
       Attribute.CustomField<'plugin::strapi-leaflet-geoman.geojson'>;
     description: Attribute.Blocks & Attribute.Required;
+    photos: Attribute.Media<'images', true> & Attribute.Required;
+    video: Attribute.Media<'videos'>;
+    background: Attribute.Media<'images'> & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -1206,6 +1247,7 @@ declare module '@strapi/types' {
       'api::category.category': ApiCategoryCategory;
       'api::contact.contact': ApiContactContact;
       'api::coupon.coupon': ApiCouponCoupon;
+      'api::main-event.main-event': ApiMainEventMainEvent;
       'api::news-letter.news-letter': ApiNewsLetterNewsLetter;
       'api::payment.payment': ApiPaymentPayment;
       'api::qa-section.qa-section': ApiQaSectionQaSection;

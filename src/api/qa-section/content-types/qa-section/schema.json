@@ -25,6 +25,7 @@
       "enum": [
         "contact",
         "book",
+        "home",
         "support"
       ]
     }

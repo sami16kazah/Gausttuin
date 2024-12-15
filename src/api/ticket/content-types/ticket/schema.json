@@ -4,7 +4,7 @@
   "info": {
     "singularName": "ticket",
     "pluralName": "tickets",
-    "displayName": "Ticket",
+    "displayName": "Event",
     "description": ""
   },
   "options": {
@@ -35,6 +35,30 @@
     },
     "description": {
       "type": "blocks",
+      "required": true
+    },
+    "photos": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "video": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "videos"
+      ]
+    },
+    "background": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
       "required": true
     }
   }
