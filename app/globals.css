@@ -66,3 +66,24 @@ input:-webkit-autofill:focus {
   background-color: #FF914D !important ; /* Active bullet color */
   opacity: 1 !important; /* Ensures active bullet is fully opaque */
 }
+
+/* loading logo animation */
+
+@keyframes whatsapp-pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+}
+
+.whatsapp-pulse {
+  animation: whatsapp-pulse 1.5s ease-in-out infinite;
+}

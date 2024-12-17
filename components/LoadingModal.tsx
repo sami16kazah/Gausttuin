@@ -1,53 +1,31 @@
-import ReactDOM from "react-dom";
-import { ReactNode, useEffect } from "react";
-import { Button } from "./button"; // assuming button is typed and defined
+import { useEffect } from "react";
 import React from "react";
+import Image from "next/image";
+import Logo from "../app/logo.png"; // Ensure correct path to the logo
 
-// Define the prop types for the Modal component
-interface ModalProps {
-  onClose: () => void; // Corrected the typo from `onCLose` to `onClose`
-  title?: string;
-  description?: string;
-  buttonDescription?: string;
-  children?:ReactNode
-}
-
-const LoadingModal: React.FC<ModalProps> = ({ onClose, title, description,buttonDescription,children }) => {
+const LoadingModal = () => {
   useEffect(() => {
-    // Add overflow-hidden class to the body when modal is open
+    // Prevent scrolling when the modal is open
     document.body.classList.add("overflow-hidden");
 
-    // Clean up by removing the overflow-hidden class when modal is closed
+    // Cleanup when the component unmounts
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
   }, []);
 
-  // Ensure that the modal-container element exists in the DOM
-  const modalRoot = document.querySelector(".modal-container");
-  if (!modalRoot) return null;
-
-  return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 flex justify-center items-center">
-      {/* Overlay with opacity */}
-      <div className="absolute inset-0 bg-black opacity-75" />
-      {/* Modal content */}
-      <div className="fixed p-10 bg-white rounded-3xl h-1/2 w-1/2">
-        <div className="flex flex-col justify-center align-middle w-full h-full">
-          <div className="flex flex-col justify-center align-middle w-full h-full">
-            <div className="text-xl text-center font-sans font-bold">{title}</div>
-            <div className="text-lg text-center font-sans mt-2">{description}</div>
-          </div>
-          <div className="flex justify-center">
-            {children}
-            <Button onClick={onClose}  className="bg-green-500 md:w-1/3 lg:w-1/3 xl:w-1/3">
-              {buttonDescription}
-            </Button>
-          </div>
-        </div>
+  return (
+    <div className="fixed inset-0 z-50 flex justify-center items-center bg-white bg-opacity-75 m-auto">
+      {/* Logo with WhatsApp-like pulse animation */}
+      <div className="whatsapp-pulse">
+        <Image
+          className="w-32 h-auto" // Adjust the logo size as needed
+          src={Logo}
+          alt="Loading Logo"
+          priority
+        />
       </div>
-    </div>,
-    modalRoot
+    </div>
   );
 };
 

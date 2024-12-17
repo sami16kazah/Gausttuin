@@ -1,33 +1,44 @@
-"use client"; // Make this a client component
+"use client";
 
-import AnimatedWrapper from "@/components/pages/AnimatedWrapper";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import React, { useState, useEffect } from "react";
 import LoadingModal from "../LoadingModal";
+import { getInternetSpeed } from "@/util/getInternetSpeed";
 
 export default function ClientWrapper({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname(); // Client-side hook to get the current route
+  const pathname = usePathname();
   const [loading, setLoading] = useState<boolean>(true);
-  const handelClose = () => {
-    setLoading((prev) => !prev);
-  };
-  useEffect(() => {
-    // Simulate a loading delay or data fetching logic
-    const timer = setTimeout(() => {
-      handelClose(); // Set loading to false after a delay
-    }, 1500); // Adjust the delay as needed
 
-    return () => clearTimeout(timer); // Cleanup
-  }, []);
+  useEffect(() => {
+    let timeout = 1500; // Default timeout in milliseconds
+
+    // Dynamically adjust the timeout based on internet speed
+    const measureSpeedAndSetLoading = async () => {
+      setLoading(true);
+
+      const speed = await getInternetSpeed();
+      console.log("Internet Speed (bps):", speed);
+
+      // Adjust timeout: Faster speed = shorter delay, Slower speed = longer delay
+      if (speed > 5000000) timeout = 1000; // Fast network (5 Mbps+)
+      else if (speed > 2000000) timeout = 2000; // Moderate network (2-5 Mbps)
+      else timeout = 4000; // Slow network (<2 Mbps)
+
+      const timer = setTimeout(() => setLoading(false), timeout);
+
+      return () => clearTimeout(timer);
+    };
+
+    measureSpeedAndSetLoading();
+  }, [pathname]);
 
   return (
-    <AnimatedWrapper key={pathname}>
-      {" "}
-      {loading && <LoadingModal onClose={handelClose} />} {!loading && children}
-    </AnimatedWrapper>
+    <>
+      {loading ? <LoadingModal /> : children}
+    </>
   );
 }
