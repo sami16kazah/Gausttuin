@@ -37,13 +37,13 @@ export const EventFeature: React.FC<EventFeatureProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center justify-center w-full ">
+      <div className="flex items-center justify-center w-full m-auto">
         {/* Only render Swiper after it's initialized */}
         {swiperInitialized && (
           <Swiper
             modules={[Navigation, Pagination]}
-            spaceBetween={3}  // Increased space between slides
-            slidesPerView={3}
+            spaceBetween={100}  // Increased space between slides
+            slidesPerView={4.5}
             navigation={{
               prevEl: prevRef.current,
               nextEl: nextRef.current,
@@ -55,10 +55,10 @@ export const EventFeature: React.FC<EventFeatureProps> = ({
             breakpoints={{
               320: { slidesPerView: 1 },         // For small screens
               480: { slidesPerView: 1.5 },       // For medium screens
-              768: { slidesPerView: 2 },         // For large screens
-              1024: { slidesPerView: 3 },        // For extra large screens
+              768: { slidesPerView: 2.5 },         // For large screens
+              1024: { slidesPerView: 3.5 },        // For extra large screens
             }}
-            className="w-full max-w-full m-2"  // Make sure it fills the container
+            className="w-full max-w-full mx-auto"  // Make sure it fills the container
           >
             {children.map((child, index) => (
               <SwiperSlide
