@@ -8,6 +8,7 @@ import Modal from "@/components/Modal";
 import Breif from "../../public/images/what-we-have.png";
 import Image from "next/image";
 import QA from "@/components/QA";
+import EventList from "@/components/pages/event/EventList";
 
 export default function Home() {
   const [showModel, setShowModel] = useState<boolean>(false);
@@ -41,6 +42,7 @@ export default function Home() {
 
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow">
+          <EventList></EventList>
           <Image src={Breif} alt="breif"></Image>
           <QA location="home"></QA>
         </main>

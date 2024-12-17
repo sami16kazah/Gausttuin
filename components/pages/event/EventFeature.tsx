@@ -1,6 +1,5 @@
-"use client"
+"use client";
 import React, { ReactNode, useRef, useEffect, useState } from "react";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -9,11 +8,14 @@ import { Navigation, Pagination } from "swiper/modules";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 
 interface EventFeatureProps {
+  text: string;
   children: ReactNode[];
 }
 
-export const EventFeature: React.FC<EventFeatureProps> = ({ children }) => {
-  
+export const EventFeature: React.FC<EventFeatureProps> = ({
+  text,
+  children,
+}) => {
   const [swiperInitialized, setSwiperInitialized] = useState(false);
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
@@ -26,7 +28,15 @@ export const EventFeature: React.FC<EventFeatureProps> = ({ children }) => {
 
   return (
     <div className="flex flex-grow flex-col justify-start bg-white rounded-lg shadow-lg p-6 m-0">
-      <div className="flex items-center justify-center w-full  mx-auto">
+      <div className="flex justify-between items-start m-0 p-0">
+        <div className="flex flex-col">
+          <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF914D] to-[#556D4C] text-2xl font-semibold">
+            {text}
+          </h2>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center w-full max-w-[80%] mx-auto">
         {/* Only render Swiper after it's initialized */}
         {swiperInitialized && (
           <Swiper
