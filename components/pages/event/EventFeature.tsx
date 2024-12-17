@@ -17,6 +17,7 @@ export const EventFeature: React.FC<EventFeatureProps> = ({
   children,
 }) => {
   const [swiperInitialized, setSwiperInitialized] = useState(false);
+
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
   const paginationRef = useRef<HTMLDivElement>(null);
@@ -27,21 +28,21 @@ export const EventFeature: React.FC<EventFeatureProps> = ({
   }, []);
 
   return (
-    <div className="flex flex-grow flex-col justify-start bg-white rounded-lg shadow-lg p-6 m-0">
+    <div className="relative flex flex-grow flex-col justify-start bg-white rounded-lg shadow-lg p-6 m-0">
       <div className="flex justify-between items-start m-0 p-0">
-        <div className="flex flex-col">
+        <div className="flex flex-col m-2">
           <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF914D] to-[#556D4C] text-2xl font-semibold">
             {text}
           </h2>
         </div>
       </div>
 
-      <div className="flex items-center justify-center w-full max-w-[80%] mx-auto">
+      <div className="flex items-center justify-center w-full ">
         {/* Only render Swiper after it's initialized */}
         {swiperInitialized && (
           <Swiper
             modules={[Navigation, Pagination]}
-            spaceBetween={1}
+            spaceBetween={3}  // Increased space between slides
             slidesPerView={3}
             navigation={{
               prevEl: prevRef.current,
@@ -51,12 +52,18 @@ export const EventFeature: React.FC<EventFeatureProps> = ({
               el: paginationRef.current,
               clickable: true,
             }}
-            className="flex items-center justify-center  max-w-[80%] w-full mx-auto"
+            breakpoints={{
+              320: { slidesPerView: 1 },         // For small screens
+              480: { slidesPerView: 1.5 },       // For medium screens
+              768: { slidesPerView: 2 },         // For large screens
+              1024: { slidesPerView: 3 },        // For extra large screens
+            }}
+            className="w-full max-w-full m-2"  // Make sure it fills the container
           >
             {children.map((child, index) => (
               <SwiperSlide
                 key={index}
-                className="flex items-center justify-center text-center space-x-2"
+                className="flex items-center justify-center text-center"
               >
                 {child}
               </SwiperSlide>
@@ -65,7 +72,7 @@ export const EventFeature: React.FC<EventFeatureProps> = ({
         )}
       </div>
 
-      <div className="flex items-center justify-center mt-4 ">
+      <div className="flex items-center justify-center mt-4">
         <button
           ref={prevRef}
           className="text-orange-500 hover:text-orange-600 transition duration-300"
@@ -74,10 +81,10 @@ export const EventFeature: React.FC<EventFeatureProps> = ({
         </button>
 
         {/* Pagination bullets positioned between the arrows */}
-        <div className="w-fit h-10">
+        <div className="w-fit h-10 mx-2">
           <div
             ref={paginationRef}
-            className="flex  m-2 p-2 w-fit h-fit gap-1 "
+            className="flex items-center justify-center gap-2"
           ></div>
         </div>
 

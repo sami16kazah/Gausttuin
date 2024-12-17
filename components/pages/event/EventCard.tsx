@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -75,9 +74,9 @@ export const EventCard: React.FC<EventCardProps> = ({
       </div>
 
       {/* Event Info */}
-      <div className="p-4">
+      <div className="p-4 flex flex-col justify-between h-full">
         <h3 className="text-gray-800 font-semibold text-lg">{name}</h3>
-        <p className="text-green-600 font-bold text-md my-1">
+        <p className="text-[#556D4C] font-bold text-md my-1">
           $ {price.toLocaleString()} 
         </p>
         <p className="text-gray-600 text-sm truncate">{description}</p>
@@ -87,7 +86,7 @@ export const EventCard: React.FC<EventCardProps> = ({
           <span role="img" aria-label="location">
             📍
           </span>
-          <p className="ml-1">{locationName}</p>
+          <p className="ml-1 truncate w-full">{locationName}</p> {/* Truncate location */}
         </div>
       </div>
 
@@ -95,7 +94,7 @@ export const EventCard: React.FC<EventCardProps> = ({
       <div className="px-4 pb-4">
         <button
           onClick={handleGoToEvent}
-          className="w-full bg-green-600 text-white py-2 rounded-md font-medium hover:bg-green-700 transition"
+          className="w-full bg-[#556D4C] text-white py-2 rounded-md font-medium hover:bg-orange-700 transition"
         >
           Book now
         </button>
