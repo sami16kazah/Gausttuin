@@ -155,7 +155,7 @@ module.exports = {
           mollieId: payment.id,
           amount: totalAmount,
           status: "pending",
-          shop_items: cartItems.map((item) => ({ id: item.id })), // Save cart item IDs
+          shop_items: productIds.map((id) => ({ id: id })), // Save cart item IDs
           invoice: uploadedFile[0].id, // Save the uploaded file ID
           email: email,
           phone: phone,
