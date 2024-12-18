@@ -30,13 +30,17 @@
       "target": "api::shop-item.shop-item",
       "mappedBy": "payment"
     },
+    "tickets": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ticket.ticket",
+      "mappedBy": "payment"
+    },
     "invoice": {
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "files"
-      ]
+      "allowedTypes": ["files"]
     },
     "email": {
       "type": "email",

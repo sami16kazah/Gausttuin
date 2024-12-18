@@ -155,7 +155,8 @@ module.exports = {
           mollieId: payment.id,
           amount: totalAmount,
           status: "pending",
-          shop_items: productIds.map((id) => ({ id: id })), // Save cart item IDs
+          shop_items: cartItems.filter(item => item.item_type === "product_").map(item => ({ id: item.id })),
+          tickets: cartItems.filter(item => item.item_type === "ticket_").map(item => ({ id: item.id })),
           invoice: uploadedFile[0].id, // Save the uploaded file ID
           email: email,
           phone: phone,
