@@ -105,13 +105,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
     }
 
     try {
-      console.log("Request Data:", {
-        cartItems,
-        couponCode,
-        phone,
-        email,
-        location,
-      });
+
       const response = await axios.post(`/api/payment`, {
         cartItems,
         couponCode: couponCode , // Ensure couponCode is sent as null if empty
