@@ -22,19 +22,20 @@ module.exports = {
 
     try {
       // Get product data from database
-      const productIds = cartItems.filter(item => item.item_type.startsWith("product_")).map(item => item.id);
-      const ticketIds = cartItems.filter(item => item.item_type.startsWith("ticket_")).map(item => item.id);
+      const productIds = cartItems
+        .filter((item) => item.item_type.startsWith("product_"))
+        .map((item) => item.id);
+      const ticketIds = cartItems
+        .filter((item) => item.item_type.startsWith("ticket_"))
+        .map((item) => item.id);
       const products = await strapi.db
         .query("api::shop-item.shop-item")
         .findMany({
           filters: { id: { $in: productIds } },
         });
-
-        const tickets = await strapi.db
-        .query("api::ticket.ticket")
-        .findMany({
-          filters: { id: { $in: ticketIds } },
-        });
+      const tickets = await strapi.db.query("api::ticket.ticket").findMany({
+        filters: { id: { $in: ticketIds } },
+      });
 
       // Calculate subtotal based on cart items and product prices
       let subtotal = 0;
@@ -259,7 +260,6 @@ function generatePdfBuffer(data) {
           console.error(`Invalid price for item at index ${index}:`, item);
           doc.text(`Error: Invalid price for ${item.name}`, {
             align: "left",
-            color: "red",
           });
         } else {
           const totalItemPrice = (price * quantity).toFixed(2);
