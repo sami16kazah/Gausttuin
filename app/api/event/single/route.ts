@@ -29,6 +29,8 @@ const convertRichTextToPlain = (richText: any) => {
   return typeof richText === "string" ? richText : "";
 };
 
+
+
 export async function POST(request: Request) {
   const { id } = await request.json();
   try {
