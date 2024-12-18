@@ -33,7 +33,7 @@ module.exports = {
         const tickets = await strapi.db
         .query("api::ticket.ticket")
         .findMany({
-          filters: { id: { $in: productIds } },
+          filters: { id: { $in: ticketIds } },
         });
 
       // Calculate subtotal based on cart items and product prices
