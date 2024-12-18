@@ -23,11 +23,8 @@ module.exports = {
     try {
       // Get product data from database
       const productIds = cartItems
-        .filter((item) => item.item_type.startsWith("product_"))
-        .map((item) => item.id);
-      const ticketIds = cartItems
-        .filter((item) => item.item_type.startsWith("ticket_"))
-        .map((item) => item.id);
+        .filter((item) => item.item_type.startsWith("product_")).map((item) => item.id);
+      const ticketIds = cartItems.filter((item) => item.item_type.startsWith("ticket_")).map((item) => item.id);
       const products = await strapi.db
         .query("api::shop-item.shop-item")
         .findMany({
@@ -50,7 +47,7 @@ module.exports = {
           }
         }
         if (ticket) {
-          const price = parseFloat(ticket.Price);
+          const price = parseFloat(ticket.price);
           const quantity = item.quantity;
           if (!isNaN(price) && !isNaN(quantity)) {
             subtotal += price * quantity;
