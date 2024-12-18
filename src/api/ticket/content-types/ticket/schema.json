@@ -60,6 +60,13 @@
       "type": "media",
       "multiple": false,
       "required": true
+    },
+    "payment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::payment.payment",
+      "inversedBy": "tickets"
     }
+    
   }
 }
