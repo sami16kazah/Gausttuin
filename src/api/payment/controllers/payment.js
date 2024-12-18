@@ -15,9 +15,9 @@ const mollieClient = createMollieClient({
 module.exports = {
   async payment(ctx) {
     // @ts-ignore
-    const { cartItems, discount, couponCode, phone, email, location } =
-      ctx.request.body;
-
+    const { cartItems, couponCode, phone, email, location } = ctx.request.body;
+    // Calculate subtotal from cart items
+    let subtotal = 0;
     try {
       // Get product and ticket data
       const productIds = cartItems
@@ -26,39 +26,42 @@ module.exports = {
       const ticketIds = cartItems
         .filter((item) => item.item_type.startsWith("ticket_"))
         .map((item) => item.id);
-      const products = await strapi.db
-        .query("api::shop-item.shop-item")
-        .findMany({
-          filters: { id: { $in: productIds } },
+      if (productIds) {
+        const products = await strapi.db
+          .query("api::shop-item.shop-item")
+          .findMany({
+            filters: { id: { $in: productIds } },
+          });
+        cartItems.forEach((item) => {
+          const product = products.find(
+            (p) => p.id === item.id && item.item_type === "product_"
+          );
+          if (product) {
+            const price = parseFloat(product.Price);
+            const quantity = item.quantity;
+            if (!isNaN(price) && !isNaN(quantity)) {
+              subtotal += price * quantity;
+            }
+          }
         });
-      const tickets = await strapi.db.query("api::ticket.ticket").findMany({
-        filters: { id: { $in: ticketIds } },
-      });
-
-      // Calculate subtotal from cart items
-      let subtotal = 0;
-      cartItems.forEach((item) => {
-        const product = products.find(
-          (p) => p.id === item.id && item.item_type === "product_"
-        );
-        const ticket = tickets.find(
-          (t) => t.id === item.id && item.item_type === "ticket_"
-        );
-        if (product) {
-          const price = parseFloat(product.Price);
-          const quantity = item.quantity;
-          if (!isNaN(price) && !isNaN(quantity)) {
-            subtotal += price * quantity;
+      }
+      if (ticketIds) {
+        const tickets = await strapi.db.query("api::ticket.ticket").findMany({
+          filters: { id: { $in: ticketIds } },
+        });
+        cartItems.forEach((item) => {
+          const ticket = tickets.find(
+            (t) => t.id === item.id && item.item_type === "ticket_"
+          );
+          if (ticket) {
+            const price = parseFloat(ticket.price);
+            const quantity = item.quantity;
+            if (!isNaN(price) && !isNaN(quantity)) {
+              subtotal += price * quantity;
+            }
           }
-        }
-        if (ticket) {
-          const price = parseFloat(ticket.price);
-          const quantity = item.quantity;
-          if (!isNaN(price) && !isNaN(quantity)) {
-            subtotal += price * quantity;
-          }
-        }
-      });
+        });
+      }
 
       // Apply coupon discount if valid coupon code is provided
       let discount_ = 0;
