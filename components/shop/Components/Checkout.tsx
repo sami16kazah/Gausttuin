@@ -234,7 +234,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
 
       <button
         onClick={handleCheckout}
-        className="mt-4 bg-[#5f8053] hover:transition hover:duration-300 hover:ease-in-out hover:bg-[#6d985d] text-white py-2 px-4 rounded w-full cursor-pointer"
+        className="mt-4 z-20 bg-[#5f8053] hover:transition hover:duration-300 hover:ease-in-out hover:bg-[#6d985d] text-white py-2 px-4 rounded w-full cursor-pointer"
       >
         {loading ? " Checking out ... " : "Checkout"}
       </button>
