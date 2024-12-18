@@ -16,28 +16,54 @@ const mollieClient = createMollieClient({
 
 module.exports = {
   async payment(ctx) {
-    // @ts-ignore
-    const { cartItems, discount, couponCode, phone, email, location } =
-      ctx.request.body;
+    const { cartItems, discount, couponCode, phone, email, location } = ctx.request.body;
 
     try {
-      // Get product data from database
-      const productIds = cartItems.map((item) => item.id);
+      // Separate product and ticket IDs
+      const productIds = cartItems.filter(item => item.item_type.startsWith("product_")).map(item => item.id);
+      const ticketIds = cartItems.filter(item => item.item_type.startsWith("ticket_")).map(item => item.id);
+
+      // Fetch product data from the database
       const products = await strapi.db
         .query("api::shop-item.shop-item")
         .findMany({
           filters: { id: { $in: productIds } },
         });
 
-      // Calculate subtotal based on cart items and product prices
+      // Fetch ticket data from the database
+      const tickets = await strapi.db
+        .query("api::ticket.ticket")
+        .findMany({
+          filters: { id: { $in: ticketIds } },
+        });
+
+      // Calculate subtotal based on cart items (products and tickets)
       let subtotal = 0;
+
+      // Calculate product prices
       cartItems.forEach((item) => {
-        const product = products.find((p) => p.id === item.id);
-        if (product) {
-          const price = parseFloat(product.Price);
-          const quantity = item.quantity;
-          if (!isNaN(price) && !isNaN(quantity)) {
-            subtotal += price * quantity;
+        if (item.id.startsWith("product_")) {
+          const product = products.find((p) => p.id === item.id);
+          if (product) {
+            const price = parseFloat(product.Price);
+            const quantity = item.quantity;
+            if (!isNaN(price) && !isNaN(quantity)) {
+              subtotal += price * quantity;
+            }
+          }
+        }
+      });
+
+      // Calculate ticket prices
+      cartItems.forEach((item) => {
+        if (item.id.startsWith("ticket_")) {
+          const ticket = tickets.find((t) => t.id === item.id);
+          if (ticket) {
+            const price = parseFloat(ticket.price);
+            const quantity = item.quantity;
+            if (!isNaN(price) && !isNaN(quantity)) {
+              subtotal += price * quantity;
+            }
           }
         }
       });
@@ -46,7 +72,7 @@ module.exports = {
       let discount_ = 0;
       let coupon = { code: 0 };
 
-      if (discount && coupon) {
+      if (discount && couponCode) {
         discount_ = parseFloat(discount);
         coupon = await strapi.db.query("api::coupon.coupon").findOne({
           where: { code: couponCode },
@@ -55,6 +81,7 @@ module.exports = {
           coupon = { code: 0 };
         }
       }
+
       if (discount_ > subtotal) {
         discount_ = subtotal; // Discount can't be greater than the subtotal
       }
@@ -65,7 +92,7 @@ module.exports = {
       const payment = await mollieClient.payments.create({
         amount: {
           currency: "EUR",
-          value: totalAmount.toFixed(2), // Round to two decimal places
+          value: totalAmount.toFixed(2),
         },
         description: "Order description here",
         redirectUrl: `${process.env.CLIENT_URL}/home?show=true&title=Thank you for your payment&message=Payment has been done successfully we had sent an invoice to your email `,
@@ -86,32 +113,27 @@ module.exports = {
       };
 
       // Generate the invoice PDF buffer
-      const invoiceBuffer = await generatePdfBuffer(data);
+      const invoiceBuffer = await generatePdfBuffer(data, products, tickets);
 
       // Create a temporary file path for saving the invoice PDF
       const fileName = `invoice_${payment.id}.pdf`;
-      const tempFilePath = path.join(
-        process.cwd(),
-        "public",
-        "uploads",
-        fileName
-      );
+      const tempFilePath = path.join(process.cwd(), "public", "uploads", fileName);
 
       // Save the invoice PDF to the filesystem
       fs.writeFileSync(tempFilePath, invoiceBuffer);
 
       // Get file stats (size, type, etc.)
       const stats = fs.statSync(tempFilePath);
-      const mimeType = mime.lookup(tempFilePath); // Detect MIME type
+      const mimeType = mime.lookup(tempFilePath);
 
-      // Upload the file using Strapi's upload service (e.g., Cloudinary)
+      // Upload the file using Strapi's upload service
       const uploadedFile = await strapi.plugins.upload.services.upload.upload({
         data: {},
         files: {
-          path: tempFilePath, // Path to the file
-          name: fileName, // File name
-          type: mimeType || "application/pdf", // MIME type (should be 'application/pdf')
-          size: stats.size, // Size of the file
+          path: tempFilePath,
+          name: fileName,
+          type: mimeType || "application/pdf",
+          size: stats.size,
           resource_type: "raw",
         },
       });
@@ -122,8 +144,9 @@ module.exports = {
           mollieId: payment.id,
           amount: totalAmount,
           status: "pending",
-          shop_items: cartItems.map((item) => ({ id: item.id })), // Save cart item IDs
-          invoice: uploadedFile[0].id, // Save the uploaded file ID
+          shop_items: cartItems.filter(item => item.id.startsWith("product_")).map(item => ({ id: item.id })),
+          tickets: cartItems.filter(item => item.id.startsWith("ticket_")).map(item => ({ id: item.id })),
+          invoice: uploadedFile[0].id,
           email: email,
           phone: phone,
           address: location,
@@ -133,7 +156,7 @@ module.exports = {
       // Respond with the payment URL and invoice URL
       ctx.send({
         paymentUrl: payment.links.checkout.href,
-        invoiceUrl: uploadedFile[0].url, // Send the invoice URL back to the frontend
+        invoiceUrl: uploadedFile[0].url,
       });
 
       // Optionally, remove the temporary file after uploading
@@ -144,8 +167,6 @@ module.exports = {
     }
   },
 
-  // Webhook handler for Mollie payment status updates
-  // Webhook handler for Mollie payment status updates
   async handlePaymentWebhook(ctx) {
     const { id, status } = ctx.request.body; // Get payment status and ID from Mollie webhook payload
     console.log(ctx.request.body);
@@ -210,7 +231,8 @@ module.exports = {
   },
 };
 
-function generatePdfBuffer(data) {
+// Generate the invoice PDF buffer
+function generatePdfBuffer(data, products, tickets) {
   return new Promise((resolve, reject) => {
     try {
       const doc = new PDFDocument();
@@ -233,59 +255,56 @@ function generatePdfBuffer(data) {
       doc.text(`Date: ${new Date().toLocaleDateString()}`, { align: "left" });
       doc.moveDown();
 
-      // Add cart items to the invoice
-      doc.fontSize(14).text("Cart Items:", { align: "left" });
+      // Add cart items (products)
+      doc.fontSize(14).text("Products:", { align: "left" });
       doc.moveDown();
       data.cart.forEach((item, index) => {
-        // Validate and calculate item price
-        const price = parseFloat(item.price);
-        const quantity = parseFloat(item.quantity);
-        if (isNaN(price)) {
-          console.error(`Invalid price for item at index ${index}:`, item);
-          doc.text(`Error: Invalid price for ${item.name}`, {
-            align: "left",
-            color: "red",
-          });
-        } else {
+        if (item.id.startsWith("product_")) {
+          const product = products.find(p => p.id === item.id);
+          const price = parseFloat(product.Price);
+          const quantity = item.quantity;
+          if (!isNaN(price)) {
+            const totalItemPrice = (price * quantity).toFixed(2);
+            doc.text(`${product.Name} x ${quantity} = ${totalItemPrice} EUR`, { align: "left" });
+            doc.moveDown();
+          } else {
+            console.error(`Invalid price for item at index ${index}:`, item);
+            doc.text(`Error: Invalid price for ${item.name}`, { align: "left"});
+          }
+        }
+      });
+
+      // Add cart items (tickets)
+      doc.fontSize(14).text("Tickets:", { align: "left" });
+      doc.moveDown();
+      data.cart.forEach((item) => {
+        if (item.id.startsWith("ticket_")) {
+          const ticket = tickets.find(t => t.id === item.id);
+          const price = parseFloat(ticket.price);
+          const quantity = item.quantity;
           const totalItemPrice = (price * quantity).toFixed(2);
-          doc.text(`${item.name} x ${item.quantity} = ${totalItemPrice} EUR`, {
-            align: "left",
-          });
+          doc.text(`${ticket.name} x ${quantity} = ${totalItemPrice} EUR`, { align: "left" });
           doc.moveDown();
         }
       });
+
+      // Add customer details
+      doc.text(`Customer Email: ${data.email}`, { align: "left" });
+      doc.text(`Customer Phone: ${data.phone}`, { align: "left" });
+      doc.text(`Delivery Address: ${data.address}`, { align: "left" });
       doc.moveDown();
 
-      doc.text(`Customer Email : ${data.email} `, {
-        align: "left",
-      });
-      doc.moveDown();
-
-      doc.text(`Customer Phone : ${data.phone} `, {
-        align: "left",
-      });
-      doc.moveDown();
-
-      doc.text(`Delivery Address : ${data.address} `, {
-        align: "left",
-      });
-      doc.moveDown();
+      // Add coupon details (if any)
       if (data.coupon !== 0) {
-        doc.text(`Coupon Applied code : ${data.coupon} `, {
-          align: "left",
-        });
+        doc.text(`Coupon Applied code: ${data.coupon}`, { align: "left" });
       }
       doc.moveDown();
 
       // Add subtotal and total amount
-      doc
-        .fontSize(14)
-        .text(`Subtotal: ${data.subtotal.toFixed(2)} EUR`, { align: "right" });
+      doc.fontSize(14).text(`Subtotal: ${data.subtotal.toFixed(2)} EUR`, { align: "right" });
 
       if (data.discount) {
-        doc.text(`Discount: ${data.discount.toFixed(2)} EUR`, {
-          align: "right",
-        });
+        doc.text(`Discount: ${data.discount.toFixed(2)} EUR`, { align: "right" });
       }
 
       doc.text(`Total: ${data.amount.toFixed(2)} EUR`, { align: "right" });
