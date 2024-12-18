@@ -16,13 +16,6 @@ module.exports = {
   async payment(ctx) {
     // @ts-ignore
     const { cartItems, couponCode, phone, email, location } = ctx.request.body;
-    console.log("Request Data:", {
-      cartItems,
-      couponCode,
-      phone,
-      email,
-      location,
-    });
     // Calculate subtotal from cart items
     let subtotal = 0;
     // Get product and ticket data
@@ -74,7 +67,7 @@ module.exports = {
     let coupon = { code: 0 };
 
     // If a coupon code is provided, validate it
-    if (couponCode !== 0) {
+    if (couponCode) {
       try {
         coupon = await strapi.db.query("api::coupon.coupon").findOne({
           where: { code: couponCode },
