@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 import axios from "axios";
 
 export async function POST(req: Request) {
-  const { cartItems, discount, couponCode, email, phone, location } =
+  const { cartItems, couponCode, email, phone, location } =
     await req.json();
-  if (!cartItems || !discount || !couponCode || !email || !phone || !location) {
+  if (!cartItems  || !email || !phone || !location) {
     return NextResponse.json(
       { message: "All fields are required" },
       { status: 400 }
@@ -18,8 +18,7 @@ export async function POST(req: Request) {
       `${process.env.NEXT_PUBLIC_API_URL}/payment`,
       {
         cartItems,
-        discount,
-        couponCode,
+        couponCode ,
         email,
         phone,
         location,
