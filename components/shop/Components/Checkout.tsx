@@ -24,7 +24,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
   const [discount, setDiscount] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
+  const [loading , setIsLoading]= useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [phone, setPhoneNumber] = useState<string>("");
   const [location, setLocation] = useState<string>("");
@@ -233,7 +233,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
         onClick={handleCheckout}
         className="mt-4 bg-[#5f8053] hover:transition hover:duration-300 hover:ease-in-out hover:bg-[#6d985d] text-white py-2 px-4 rounded w-full"
       >
-        Checkout
+       {loading ? " Checking out ... " : "Checkout"} 
       </button>
     </div>
   );
