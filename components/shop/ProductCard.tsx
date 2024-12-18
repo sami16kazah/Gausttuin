@@ -64,7 +64,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     const productExists = cart.find((item: any) => item.name === name);
 
     if (!productExists) {
-      cart.push({ id, name, price, photo, description, date, discount });
+      cart.push({
+        item_type: "product_",
+        id,
+        name,
+        price,
+        photo,
+        description,
+        date,
+        discount,
+      });
       localStorage.setItem("cart", JSON.stringify(cart));
       setInCart(true);
     }

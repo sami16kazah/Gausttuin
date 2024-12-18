@@ -54,7 +54,7 @@ export default function EventList() {
   if (error) {
     return <p>Error: {error}</p>;
   }
-  console.log(events);
+
   return events.length > 0 ? (
     <EventFeature text={"Latest Events"}>
       {events.map((item: any) => (

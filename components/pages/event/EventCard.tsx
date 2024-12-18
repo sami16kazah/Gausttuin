@@ -22,6 +22,7 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({
+  id,
   name,
   price,
   description,
@@ -33,7 +34,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   const [locationName, setLocationName] = useState("Loading...");
 
   const router = useRouter();
-  const handleGoToEvent = () => router.push("/shop/cart");
+  const handleGoToEvent = () => router.push(`/event/${id}`);
 
   // Fetch location name from Google Maps API
   useEffect(() => {
