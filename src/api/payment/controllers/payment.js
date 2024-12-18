@@ -62,11 +62,15 @@ module.exports = {
       let discount_ = 0;
       let coupon = { code: 0 };
 
-      if (discount && coupon) {
+      if (discount && couponCode) {
         discount_ = parseFloat(discount);
+       try {
         coupon = await strapi.db.query("api::coupon.coupon").findOne({
           where: { code: couponCode },
         });
+       } catch (error) {
+        coupon = { code: 0 };
+       } 
         if (coupon.max_usag <= 0) {
           coupon = { code: 0 };
         }
