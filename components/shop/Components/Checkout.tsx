@@ -117,6 +117,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
       window.location.href = response.data.paymentUrl;
     } catch (error) {
       console.error("Checkout failed:", error);
+      setIsLoading(false);
       setError("Failed to initiate payment. Please try again.");
     }
   };
