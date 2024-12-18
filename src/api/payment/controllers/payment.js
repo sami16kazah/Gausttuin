@@ -15,15 +15,22 @@ const mollieClient = createMollieClient({
 module.exports = {
   async payment(ctx) {
     // @ts-ignore
-    const { cartItems, discount, couponCode, phone, email, location } = ctx.request.body;
+    const { cartItems, discount, couponCode, phone, email, location } =
+      ctx.request.body;
 
     try {
       // Get product and ticket data
-      const productIds = cartItems.filter((item) => item.item_type.startsWith("product_")).map((item) => item.id);
-      const ticketIds = cartItems.filter((item) => item.item_type.startsWith("ticket_")).map((item) => item.id);
-      const products = await strapi.db.query("api::shop-item.shop-item").findMany({
-        filters: { id: { $in: productIds } },
-      });
+      const productIds = cartItems
+        .filter((item) => item.item_type.startsWith("product_"))
+        .map((item) => item.id);
+      const ticketIds = cartItems
+        .filter((item) => item.item_type.startsWith("ticket_"))
+        .map((item) => item.id);
+      const products = await strapi.db
+        .query("api::shop-item.shop-item")
+        .findMany({
+          filters: { id: { $in: productIds } },
+        });
       const tickets = await strapi.db.query("api::ticket.ticket").findMany({
         filters: { id: { $in: ticketIds } },
       });
@@ -31,8 +38,12 @@ module.exports = {
       // Calculate subtotal from cart items
       let subtotal = 0;
       cartItems.forEach((item) => {
-        const product = products.find((p) => p.id === item.id);
-        const ticket = tickets.find((t) => t.id === item.id);
+        const product = products.find(
+          (p) => p.id === item.id && item.item_type === "product_"
+        );
+        const ticket = tickets.find(
+          (t) => t.id === item.id && item.item_type === "ticket_"
+        );
         if (product) {
           const price = parseFloat(product.Price);
           const quantity = item.quantity;
@@ -109,7 +120,12 @@ module.exports = {
 
       // Create a temporary file path for saving the invoice PDF
       const fileName = `invoice_${payment.id}.pdf`;
-      const tempFilePath = path.join(process.cwd(), "public", "uploads", fileName);
+      const tempFilePath = path.join(
+        process.cwd(),
+        "public",
+        "uploads",
+        fileName
+      );
 
       // Save the invoice PDF to the filesystem
       fs.writeFileSync(tempFilePath, invoiceBuffer);
@@ -169,10 +185,12 @@ module.exports = {
         const payment = await mollieClient.payments.get(id);
 
         // Find the payment record in Strapi by mollieId
-        const paymentRecord = await strapi.db.query("api::payment.payment").findOne({
-          where: { mollieId: id }, // Search for the payment record using the mollieId
-          populate: { invoice: true },
-        });
+        const paymentRecord = await strapi.db
+          .query("api::payment.payment")
+          .findOne({
+            where: { mollieId: id }, // Search for the payment record using the mollieId
+            populate: { invoice: true },
+          });
 
         if (paymentRecord) {
           // Update the payment status in the Strapi database
@@ -253,7 +271,9 @@ function generatePdfBuffer(data) {
           doc.text(`Error: Invalid price for ${item.name}`, { align: "left" });
         } else {
           const totalItemPrice = (price * quantity).toFixed(2);
-          doc.text(`${item.name} x ${item.quantity} = ${totalItemPrice} EUR`, { align: "left" });
+          doc.text(`${item.name} x ${item.quantity} = ${totalItemPrice} EUR`, {
+            align: "left",
+          });
           doc.moveDown();
         }
       });
@@ -271,9 +291,13 @@ function generatePdfBuffer(data) {
       doc.moveDown();
 
       // Add subtotal and total amount
-      doc.fontSize(14).text(`Subtotal: ${data.subtotal.toFixed(2)} EUR`, { align: "right" });
+      doc
+        .fontSize(14)
+        .text(`Subtotal: ${data.subtotal.toFixed(2)} EUR`, { align: "right" });
       if (data.discount > 0) {
-        doc.text(`Discount: ${data.discount.toFixed(2)} EUR`, { align: "right" });
+        doc.text(`Discount: ${data.discount.toFixed(2)} EUR`, {
+          align: "right",
+        });
       }
       doc.text(`Total: ${data.amount.toFixed(2)} EUR`, { align: "right" });
 
