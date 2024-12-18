@@ -16,166 +16,172 @@ module.exports = {
   async payment(ctx) {
     // @ts-ignore
     const { cartItems, couponCode, phone, email, location } = ctx.request.body;
+    console.log("Request Data:", {
+      cartItems,
+      couponCode,
+      phone,
+      email,
+      location,
+    });
     // Calculate subtotal from cart items
     let subtotal = 0;
-    try {
-      // Get product and ticket data
-      const productIds = cartItems
-        .filter((item) => item.item_type.startsWith("product_"))
-        .map((item) => item.id);
-      const ticketIds = cartItems
-        .filter((item) => item.item_type.startsWith("ticket_"))
-        .map((item) => item.id);
-      if (productIds) {
-        const products = await strapi.db
-          .query("api::shop-item.shop-item")
-          .findMany({
-            filters: { id: { $in: productIds } },
-          });
-        cartItems.forEach((item) => {
-          const product = products.find(
-            (p) => p.id === item.id && item.item_type === "product_"
-          );
-          if (product) {
-            const price = parseFloat(product.Price);
-            const quantity = item.quantity;
-            if (!isNaN(price) && !isNaN(quantity)) {
-              subtotal += price * quantity;
-            }
+    // Get product and ticket data
+    const productIds = cartItems
+      .filter((item) => item.item_type.startsWith("product_"))
+      .map((item) => item.id);
+    const ticketIds = cartItems
+      .filter((item) => item.item_type.startsWith("ticket_"))
+      .map((item) => item.id);
+    if (productIds) {
+      const products = await strapi.db
+        .query("api::shop-item.shop-item")
+        .findMany({
+          filters: { id: { $in: productIds } },
+        });
+      cartItems.forEach((item) => {
+        const product = products.find(
+          (p) => p.id === item.id && item.item_type === "product_"
+        );
+        if (product) {
+          const price = parseFloat(product.Price);
+          const quantity = item.quantity;
+          if (!isNaN(price) && !isNaN(quantity)) {
+            subtotal += price * quantity;
           }
-        });
-      }
-      if (ticketIds) {
-        const tickets = await strapi.db.query("api::ticket.ticket").findMany({
-          filters: { id: { $in: ticketIds } },
-        });
-        cartItems.forEach((item) => {
-          const ticket = tickets.find(
-            (t) => t.id === item.id && item.item_type === "ticket_"
-          );
-          if (ticket) {
-            const price = parseFloat(ticket.price);
-            const quantity = item.quantity;
-            if (!isNaN(price) && !isNaN(quantity)) {
-              subtotal += price * quantity;
-            }
-          }
-        });
-      }
-
-      // Apply coupon discount if valid coupon code is provided
-      let discount_ = 0;
-      let coupon = { code: 0 };
-
-      // If a coupon code is provided, validate it
-      if (couponCode) {
-        try {
-          coupon = await strapi.db.query("api::coupon.coupon").findOne({
-            where: { code: couponCode },
-          });
-        } catch (error) {
-          coupon = { code: 0 };
         }
-
-        if (coupon && coupon.max_usag <= 0) {
-          coupon = { code: 0 }; // Invalidate coupon if usage limit is exceeded
-        }
-
-        // If a valid coupon is found, apply the discount
-        if (coupon.code) {
-          discount_ = coupon.discount_value; // Coupon discount value (could be a percentage or fixed amount)
-        }
-      }
-
-      // Ensure discount doesn't exceed the subtotal
-      if (discount_ > subtotal) {
-        discount_ = subtotal; // Discount can't be greater than the subtotal
-      }
-
-      const totalAmount = subtotal - discount_; // Calculate total after applying discount
-
-      // Create Mollie payment
-      const payment = await mollieClient.payments.create({
-        amount: {
-          currency: "EUR",
-          value: totalAmount.toFixed(2), // Round to two decimal places
-        },
-        description: "Order description here",
-        redirectUrl: `${process.env.CLIENT_URL}/home?show=true&title=Thank you for your payment&message=Payment has been done successfully we had sent an invoice to your email `,
-        webhookUrl: `${process.env.API_URL}/api/payment/validate`,
-        method: ["ideal", "creditcard", "paypal", "applepay"],
       });
-
-      const data = {
-        orderId: payment.id,
-        cart: cartItems,
-        subtotal: subtotal,
-        amount: totalAmount,
-        email: email,
-        address: location,
-        phone: phone,
-        coupon: coupon.code,
-        discount: discount_,
-      };
-
-      // Generate the invoice PDF buffer
-      const invoiceBuffer = await generatePdfBuffer(data);
-
-      // Create a temporary file path for saving the invoice PDF
-      const fileName = `invoice_${payment.id}.pdf`;
-      const tempFilePath = path.join(
-        process.cwd(),
-        "public",
-        "uploads",
-        fileName
-      );
-
-      // Save the invoice PDF to the filesystem
-      fs.writeFileSync(tempFilePath, invoiceBuffer);
-
-      // Get file stats (size, type, etc.)
-      const stats = fs.statSync(tempFilePath);
-      const mimeType = mime.lookup(tempFilePath); // Detect MIME type
-
-      // Upload the file using Strapi's upload service (e.g., Cloudinary)
-      const uploadedFile = await strapi.plugins.upload.services.upload.upload({
-        data: {},
-        files: {
-          path: tempFilePath, // Path to the file
-          name: fileName, // File name
-          type: mimeType || "application/pdf", // MIME type (should be 'application/pdf')
-          size: stats.size, // Size of the file
-          resource_type: "raw",
-        },
-      });
-
-      // Save payment data with the uploaded PDF file ID
-      await strapi.entityService.create("api::payment.payment", {
-        data: {
-          mollieId: payment.id,
-          amount: totalAmount,
-          status: "pending",
-          shop_items: cartItems.filter(item => item.item_type === "product_").map(item => ({ id: item.id })),
-          tickets: cartItems.filter(item => item.item_type === "ticket_").map(item => ({ id: item.id })),
-          invoice: uploadedFile[0].id, // Save the uploaded file ID
-          email: email,
-          phone: phone,
-          address: location,
-        },
-      });
-
-      // Respond with the payment URL and invoice URL
-      ctx.send({
-        paymentUrl: payment.links.checkout.href,
-        invoiceUrl: uploadedFile[0].url, // Send the invoice URL back to the frontend
-      });
-
-      // Optionally, remove the temporary file after uploading
-      fs.unlinkSync(tempFilePath);
-    } catch (error) {
-      console.error(error);
-      ctx.throw(400, `Payment creation failed: ${error.message}`);
     }
+    if (ticketIds) {
+      const tickets = await strapi.db.query("api::ticket.ticket").findMany({
+        filters: { id: { $in: ticketIds } },
+      });
+      cartItems.forEach((item) => {
+        const ticket = tickets.find(
+          (t) => t.id === item.id && item.item_type === "ticket_"
+        );
+        if (ticket) {
+          const price = parseFloat(ticket.price);
+          const quantity = item.quantity;
+          if (!isNaN(price) && !isNaN(quantity)) {
+            subtotal += price * quantity;
+          }
+        }
+      });
+    }
+
+    // Apply coupon discount if valid coupon code is provided
+    let discount_ = 0;
+    let coupon = { code: 0 };
+
+    // If a coupon code is provided, validate it
+    if (couponCode !== 0) {
+      try {
+        coupon = await strapi.db.query("api::coupon.coupon").findOne({
+          where: { code: couponCode },
+        });
+      } catch (error) {
+        coupon = { code: 0 };
+      }
+
+      if (coupon && coupon.max_usag <= 0) {
+        coupon = { code: 0 }; // Invalidate coupon if usage limit is exceeded
+      }
+
+      // If a valid coupon is found, apply the discount
+      if (coupon.code) {
+        discount_ = coupon.discount_value; // Coupon discount value (could be a percentage or fixed amount)
+      }
+    }
+
+    // Ensure discount doesn't exceed the subtotal
+    if (discount_ > subtotal) {
+      discount_ = subtotal; // Discount can't be greater than the subtotal
+    }
+
+    const totalAmount = subtotal - discount_; // Calculate total after applying discount
+
+    // Create Mollie payment
+    const payment = await mollieClient.payments.create({
+      amount: {
+        currency: "EUR",
+        value: totalAmount.toFixed(2), // Round to two decimal places
+      },
+      description: "Order description here",
+      redirectUrl: `${process.env.CLIENT_URL}/home?show=true&title=Thank you for your payment&message=Payment has been done successfully we had sent an invoice to your email `,
+      webhookUrl: `${process.env.API_URL}/api/payment/validate`,
+      method: ["ideal", "creditcard", "paypal", "applepay"],
+    });
+
+    const data = {
+      orderId: payment.id,
+      cart: cartItems,
+      subtotal: subtotal,
+      amount: totalAmount,
+      email: email,
+      address: location,
+      phone: phone,
+      coupon: coupon.code,
+      discount: discount_,
+    };
+
+    // Generate the invoice PDF buffer
+    const invoiceBuffer = await generatePdfBuffer(data);
+
+    // Create a temporary file path for saving the invoice PDF
+    const fileName = `invoice_${payment.id}.pdf`;
+    const tempFilePath = path.join(
+      process.cwd(),
+      "public",
+      "uploads",
+      fileName
+    );
+
+    // Save the invoice PDF to the filesystem
+    fs.writeFileSync(tempFilePath, invoiceBuffer);
+
+    // Get file stats (size, type, etc.)
+    const stats = fs.statSync(tempFilePath);
+    const mimeType = mime.lookup(tempFilePath); // Detect MIME type
+
+    // Upload the file using Strapi's upload service (e.g., Cloudinary)
+    const uploadedFile = await strapi.plugins.upload.services.upload.upload({
+      data: {},
+      files: {
+        path: tempFilePath, // Path to the file
+        name: fileName, // File name
+        type: mimeType || "application/pdf", // MIME type (should be 'application/pdf')
+        size: stats.size, // Size of the file
+        resource_type: "raw",
+      },
+    });
+
+    // Save payment data with the uploaded PDF file ID
+    await strapi.entityService.create("api::payment.payment", {
+      data: {
+        mollieId: payment.id,
+        amount: totalAmount,
+        status: "pending",
+        shop_items: cartItems
+          .filter((item) => item.item_type === "product_")
+          .map((item) => ({ id: item.id })),
+        tickets: cartItems
+          .filter((item) => item.item_type === "ticket_")
+          .map((item) => ({ id: item.id })),
+        invoice: uploadedFile[0].id, // Save the uploaded file ID
+        email: email,
+        phone: phone,
+        address: location,
+      },
+    });
+
+    // Respond with the payment URL and invoice URL
+    ctx.send({
+      paymentUrl: payment.links.checkout.href,
+      invoiceUrl: uploadedFile[0].url, // Send the invoice URL back to the frontend
+    });
+
+    // Optionally, remove the temporary file after uploading
+    fs.unlinkSync(tempFilePath);
   },
 
   // Webhook handler for Mollie payment status updates
