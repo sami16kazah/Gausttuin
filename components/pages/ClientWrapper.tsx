@@ -21,12 +21,11 @@ export default function ClientWrapper({
       setLoading(true);
 
       const speed = await getInternetSpeed();
-      console.log("Internet Speed (bps):", speed);
 
       // Adjust timeout: Faster speed = shorter delay, Slower speed = longer delay
       if (speed > 5000000) timeout = 1000; // Fast network (5 Mbps+)
-      else if (speed > 2000000) timeout = 2000; // Moderate network (2-5 Mbps)
-      else timeout = 4000; // Slow network (<2 Mbps)
+      else if (speed > 2000000) timeout = 1500; // Moderate network (2-5 Mbps)
+      else timeout = 2000; // Slow network (<2 Mbps)
 
       const timer = setTimeout(() => setLoading(false), timeout);
 
