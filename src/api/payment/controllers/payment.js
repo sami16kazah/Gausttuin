@@ -82,14 +82,10 @@ module.exports = {
 
       // If a valid coupon is found, apply the discount
       if (coupon.code) {
-        discount_ = coupon.discount_value; // Coupon discount value (could be a percentage or fixed amount)
+        discount_ = coupon.discount; // Coupon discount value (could be a percentage or fixed amount)
       }
     }
 
-    // Ensure discount doesn't exceed the subtotal
-    if (discount_ > subtotal) {
-      discount_ = subtotal; // Discount can't be greater than the subtotal
-    }
 
     const totalAmount = subtotal - discount_; // Calculate total after applying discount
 
