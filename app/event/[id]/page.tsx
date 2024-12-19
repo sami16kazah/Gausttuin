@@ -73,8 +73,9 @@ export default function Page() {
         date: event.date,
       });
       localStorage.setItem("cart", JSON.stringify(cart));
-      return router.push("/shop/cart");
+     
     }
+    return router.push("/shop/cart");
   };
 
   // Format the date

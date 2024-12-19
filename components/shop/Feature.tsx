@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { ReactNode, useRef, useEffect, useState } from "react";
 import WineStain from "../../public/images/wine-stain.png";
 import Image from "next/image";
@@ -28,7 +28,7 @@ export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
   }, []);
 
   return (
-    <div className="flex flex-grow flex-col justify-start bg-white rounded-lg shadow-lg p-6 m-0">
+    <div className="relative flex flex-grow flex-col justify-start bg-white rounded-lg shadow-lg p-6 m-0">
       <div className="flex justify-between items-start m-0 p-0">
         <div className="flex flex-col">
           <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF914D] to-[#556D4C] text-2xl font-semibold">
@@ -53,13 +53,13 @@ export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center w-full max-w-[80%] mx-auto">
+      <div className="flex items-center justify-center w-full m-auto">
         {/* Only render Swiper after it's initialized */}
         {swiperInitialized && (
           <Swiper
             modules={[Navigation, Pagination]}
-            spaceBetween={1}
-            slidesPerView={3}
+            spaceBetween={100}
+            slidesPerView={4.5}
             navigation={{
               prevEl: prevRef.current,
               nextEl: nextRef.current,
@@ -72,12 +72,12 @@ export const Feature: React.FC<FeatureProps> = ({ text, children }) => {
               124: { slidesPerView: 1 },
               280: { slidesPerView: 1 },
               320: { slidesPerView: 1 },
-              480: { slidesPerView: 1 },
-              640: { slidesPerView: 1.5 },
-              768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
+              480: { slidesPerView: 1.5 },
+              640: { slidesPerView: 2.5 },
+              768: { slidesPerView: 3.5 },
+              1024: { slidesPerView: 4.5 },
             }}
-            className="flex items-center justify-center  max-w-[80%] w-full mx-auto"
+            className="w-full max-w-full mx-auto" 
           >
             {children.map((child, index) => (
               <SwiperSlide
