@@ -191,12 +191,7 @@ export default function Page() {
                   <FaTicketAlt className="text-[#FF6F61]" />$
                   {event?.price.toLocaleString()}
                 </p>
-                <p
-                  className="flex items-center gap-2 truncate max-w-[200px]"
-                  title={locationName}
-                >
-                  
-                </p>
+
               </div>
 
               {/* Tickets Sold */}
@@ -205,7 +200,7 @@ export default function Page() {
                   <span className="text-red-500">✦</span> Location
                 </div>
                 <div>
-                  <span className="ml-6 text-gray-900">
+                  <span className=" text-gray-900">
                     {locationName}
                   </span>
                 </div>
