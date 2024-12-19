@@ -6,7 +6,7 @@ import Navbar from "@/components/pages/Navbar";
 import QA from "@/components/QA";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { FaCalendarAlt, FaMapMarkerAlt, FaTicketAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaTicketAlt } from "react-icons/fa";
 // Import Swiper components and styles
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -73,7 +73,6 @@ export default function Page() {
         date: event.date,
       });
       localStorage.setItem("cart", JSON.stringify(cart));
-     
     }
     return router.push("/shop/cart");
   };
@@ -196,20 +195,18 @@ export default function Page() {
                   className="flex items-center gap-2 truncate max-w-[200px]"
                   title={locationName}
                 >
-                  <FaMapMarkerAlt className="text-[#FF6F61]" />
-                  {locationName || "Unknown Location"}
+                  
                 </p>
               </div>
 
               {/* Tickets Sold */}
               <div className="text-[#556D4C] font-semibold flex-col">
                 <div>
-                  <span className="text-red-500">✦</span> Number of tickets
-                  sold:
+                  <span className="text-red-500">✦</span> Location
                 </div>
                 <div>
                   <span className="ml-6 text-gray-900">
-                    12,543, 4,438 people
+                    {locationName}
                   </span>
                 </div>
               </div>
@@ -282,7 +279,7 @@ export default function Page() {
               </div>
             </section>
           )}
-          {/* Additional Components */}F
+          {/* Additional Components */}
           <QA location={"book"} />
           <EventList />
         </main>
