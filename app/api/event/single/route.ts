@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   const { id } = await request.json();
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/tickets/${id}?populate=photos,video,background,guidlines,description,location`,
+      `${process.env.NEXT_PUBLIC_API_URL}/tickets/${id}?populate=photos,video,background,guidlines,description,location,timestamp=${Date.now()}`,
       {
         headers: {
           "Cache-Control": "no-cache", // Prevent caching

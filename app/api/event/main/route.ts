@@ -18,7 +18,7 @@ const handleError = (error: any) => {
 export async function GET() {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/main-events?populate[event][populate]=background`,
+      `${process.env.NEXT_PUBLIC_API_URL}/main-events?populate[event][populate]=background,timestamp=${Date.now()}`,
       {
         headers: {
           "Cache-Control": "no-store", 
