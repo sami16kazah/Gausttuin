@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import axios from "axios";
-
+export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const { id } = await req.json();
   if (!id) {

@@ -2,7 +2,7 @@
 // app/api/categories/route.ts
 import { NextResponse } from "next/server";
 import axios from "axios";
-
+export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const response = await axios.get(

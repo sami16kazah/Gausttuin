@@ -2,7 +2,7 @@
 // app/api/tickets/route.ts
 import { NextResponse } from "next/server";
 import axios from "axios";
-
+export const dynamic = "force-dynamic";
 // Helper function to extract media URLs
 const getMediaUrls = (mediaData: any) => {
   if (!mediaData) return null;

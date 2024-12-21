@@ -2,7 +2,7 @@
 // app/api/tickets/route.ts
 import { NextResponse } from "next/server";
 import axios from "axios";
-
+export const dynamic = "force-dynamic";
 // Helper function to handle errors
 const handleError = (error: any) => {
   console.error("Error fetching main event:", error.message);
