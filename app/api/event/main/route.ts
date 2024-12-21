@@ -21,7 +21,7 @@ export async function GET() {
       `${process.env.NEXT_PUBLIC_API_URL}/main-events?populate[event][populate]=background`,
       {
         headers: {
-          "Cache-Control": "no-cache", // Prevent caching
+          "Cache-Control": "no-store", 
         },
       }
     );
