@@ -32,7 +32,7 @@ async function fetchEventItems(): Promise<MainEvent | null> {
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "no-cache",
+      cache: "no-store",
     });
 
     if (!response.ok) {
