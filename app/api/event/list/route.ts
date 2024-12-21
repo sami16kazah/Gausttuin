@@ -30,7 +30,12 @@ const convertRichTextToPlain = (richText: any) => {
 export async function GET() {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/tickets?populate=photos,video,background,guidlines,description,location`
+      `${process.env.NEXT_PUBLIC_API_URL}/tickets?populate=photos,video,background,guidlines,description,location`,
+      {
+        headers: {
+          "Cache-Control": "no-cache", // Prevent caching
+        },
+      }
     );
 
     // Transform and map the data
