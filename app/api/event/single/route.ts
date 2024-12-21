@@ -29,18 +29,13 @@ const convertRichTextToPlain = (richText: any) => {
   return typeof richText === "string" ? richText : "";
 };
 
+
+
 export async function POST(request: Request) {
   const { id } = await request.json();
   try {
     const response = await axios.get(
-      `${
-        process.env.NEXT_PUBLIC_API_URL
-      }/tickets/${id}?populate=photos,video,background,guidlines,description,location,timestamp=${Date.now()}`,
-      {
-        headers: {
-          "Cache-Control": "no-cache", // Prevent caching
-        },
-      }
+      `${process.env.NEXT_PUBLIC_API_URL}/tickets/${id}?populate=photos,video,background,guidlines,description,location`
     );
 
     // Transform and map the data
@@ -60,15 +55,7 @@ export async function POST(request: Request) {
       background: getMediaUrls(ticket.attributes.background?.data), // Single background URL
     };
 
-    return NextResponse.json(tickets, {
-      status: 200,
-      headers: {
-        "Cache-Control":
-          "no-store, no-cache, must-revalidate, proxy-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
-    });
+    return NextResponse.json(tickets, { status: 200 });
   } catch (error: any) {
     console.error("Error fetching tickets:", error.message);
 

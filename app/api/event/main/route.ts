@@ -18,12 +18,7 @@ const handleError = (error: any) => {
 export async function GET() {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/main-events?populate[event][populate]=background,timestamp=${Date.now()}`,
-      {
-        headers: {
-          "Cache-Control": "no-store", 
-        },
-      }
+      `${process.env.NEXT_PUBLIC_API_URL}/main-events?populate[event][populate]=background`
     );
 
     const mainEventData = response.data.data;
@@ -66,15 +61,7 @@ export async function GET() {
       },
     };
 
-    return NextResponse.json(mainEvent, {
-      status: 200,
-      headers: {
-        "Cache-Control":
-          "no-store, no-cache, must-revalidate, proxy-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
-      },
-    });
+    return NextResponse.json(mainEvent, { status: 200 });
   } catch (error: any) {
     return handleError(error);
   }
